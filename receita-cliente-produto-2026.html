@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zukkin Brasil — Receita por Cliente & Produto 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e1a;--surface:#111827;--surface2:#1a2236;--border:#1e293b;
+  --text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;
+  --blue:#3b82f6;--green:#10b981;--red:#ef4444;--purple:#8b5cf6;
+  --amber:#f59e0b;--cyan:#06b6d4;--pink:#ec4899;--orange:#f97316;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding:24px}
+.container{max-width:1600px;margin:0 auto}
+
+/* Header */
+.header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.badge{display:inline-block;background:#7c2d1230;color:#fbbf24;border:1px solid #92400e50;padding:4px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.header h1{font-size:28px;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .sub{font-size:13px;color:var(--muted);margin-top:4px}
+
+/* KPI Grid */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:32px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--blue))}
+.kpi-label{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.kpi-value{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--text)}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* Charts */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+.chart-box.full{grid-column:1/-1}
+.chart-box h3{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+.chart-wrap{position:relative;height:350px}
+.chart-wrap.short{height:280px}
+
+/* Tables */
+.section-title{font-size:14px;font-weight:700;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin:32px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.table-wrap{overflow-x:auto;margin-bottom:32px;border-radius:12px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:1200px}
+thead th{background:var(--surface2);color:var(--dim);font-weight:700;font-size:10px;letter-spacing:.8px;text-transform:uppercase;padding:10px 8px;text-align:right;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:2}
+thead th:first-child,thead th:nth-child(2){text-align:left}
+tbody td{padding:8px;border-bottom:1px solid var(--border);text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500}
+tbody td.client-name{text-align:left;font-family:'DM Sans',sans-serif;font-weight:600;color:var(--text);min-width:180px}
+tbody td.rank{text-align:center;color:var(--dim);font-weight:600;width:30px}
+tbody td.num{color:var(--text)}
+tbody td.num.zero{color:var(--dim);opacity:.4}
+tbody td.total-cell{color:var(--blue);font-weight:700;border-left:2px solid var(--border)}
+tbody td.pct-cell{color:var(--muted);font-style:italic}
+tbody tr.row-even{background:var(--surface)}
+tbody tr.row-odd{background:var(--bg)}
+tbody tr:hover{background:var(--surface2)}
+
+/* Product tags */
+.prod-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.prod-tag{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;white-space:nowrap}
+.prod-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+/* Footer */
+.footer{text-align:center;padding:32px 0;border-top:1px solid var(--border);margin-top:40px;color:var(--dim);font-size:11px}
+
+@media(max-width:1200px){
+  .kpi-grid{grid-template-columns:repeat(3,1fr)}
+  .charts-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  body{padding:12px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div class="badge">Confidencial — Due Diligence</div>
+  <h1>Receita por Cliente & Produto — 2026</h1>
+  <div class="sub">Visão Mensal de Recebíveis | Zukkin Brasil Inteligência de Mercado S/A | Atualizado: Abril/2026</div>
+</div>
+
+<!-- KPIs -->
+<div class="kpi-grid">
+  <div class="kpi" style="--accent:var(--blue)">
+    <div class="kpi-label">ARR Projetado 2026</div>
+    <div class="kpi-value">R$ 18M</div>
+    <div class="kpi-sub">Recebíveis contratados: R$ 16,3M + expansão</div>
+  </div>
+  <div class="kpi" style="--accent:var(--green)">
+    <div class="kpi-label">MRR Março/2026</div>
+    <div class="kpi-value">R$ 1,5M</div>
+    <div class="kpi-sub">Maior MRR do ano</div>
+  </div>
+  <div class="kpi" style="--accent:var(--purple)">
+    <div class="kpi-label">Clientes Ativos</div>
+    <div class="kpi-value">68</div>
+    <div class="kpi-sub">com receita > 0</div>
+  </div>
+  <div class="kpi" style="--accent:var(--amber)">
+    <div class="kpi-label">Ticket Médio Mensal</div>
+    <div class="kpi-value">R$ 20.030</div>
+    <div class="kpi-sub">por cliente</div>
+  </div>
+  <div class="kpi" style="--accent:var(--cyan)">
+    <div class="kpi-label">Top Cliente</div>
+    <div class="kpi-value">Muffato</div>
+    <div class="kpi-sub">10.5% da receita</div>
+  </div>
+  <div class="kpi" style="--accent:var(--pink)">
+    <div class="kpi-label">Concentração Top 5</div>
+    <div class="kpi-value">29.6%</div>
+    <div class="kpi-sub">Top 10: 45.0%</div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="charts-grid">
+  <div class="chart-box">
+    <h3>Top 10 Clientes — Receita Anual</h3>
+    <div class="chart-wrap"><canvas id="chartTop10"></canvas></div>
+  </div>
+  <div class="chart-box">
+    <h3>Receita por Produto</h3>
+    <div class="chart-wrap"><canvas id="chartProducts"></canvas></div>
+  </div>
+  <div class="chart-box">
+    <h3>Receita Mensal Total (MRR)</h3>
+    <div class="chart-wrap short"><canvas id="chartMonthly"></canvas></div>
+  </div>
+  <div class="chart-box">
+    <h3>Concentração de Receita (Curva de Pareto)</h3>
+    <div class="chart-wrap short"><canvas id="chartPareto"></canvas></div>
+  </div>
+</div>
+
+<!-- Product Summary Table -->
+<div class="section-title">Receita por Produto — Visão Mensal</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+  <th style="text-align:left;min-width:200px">Produto</th>
+  <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
+  <th>Total</th>
+  <th>%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+        <td><span class="prod-dot" style="background:#3b82f6"></span> Zukkin Analytics + Pesquisas</td>
+        <td class="num">610.433</td><td class="num">589.073</td><td class="num">755.018</td><td class="num">636.670</td><td class="num">623.848</td><td class="num">631.748</td><td class="num">627.916</td><td class="num">627.135</td><td class="num">628.133</td><td class="num">628.962</td><td class="num">630.033</td><td class="num">630.177</td>
+        <td class="num total-cell">7.619.148</td>
+        <td class="num pct-cell">46.6%</td>
+    </tr><tr>
+        <td><span class="prod-dot" style="background:#8b5cf6"></span> Zukkin Pricing</td>
+        <td class="num">540.764</td><td class="num">544.183</td><td class="num">624.677</td><td class="num">622.160</td><td class="num">596.020</td><td class="num">597.722</td><td class="num">589.171</td><td class="num">589.621</td><td class="num">591.107</td><td class="num">591.488</td><td class="num">593.475</td><td class="num">594.615</td>
+        <td class="num total-cell">7.075.004</td>
+        <td class="num pct-cell">43.3%</td>
+    </tr><tr>
+        <td><span class="prod-dot" style="background:#ef4444"></span> Z.Robot</td>
+        <td class="num">68.320</td><td class="num">76.256</td><td class="num">67.351</td><td class="num">80.227</td><td class="num">88.383</td><td class="num">92.062</td><td class="num">94.559</td><td class="num">92.526</td><td class="num">92.588</td><td class="num">93.080</td><td class="num">93.099</td><td class="num">93.582</td>
+        <td class="num total-cell">1.032.034</td>
+        <td class="num pct-cell">6.3%</td>
+    </tr><tr>
+        <td><span class="prod-dot" style="background:#f59e0b"></span> Zukkin Analytics + ZGO</td>
+        <td class="num">37.646</td><td class="num">38.145</td><td class="num">43.705</td><td class="num">39.241</td><td class="num">38.196</td><td class="num">38.291</td><td class="num">42.881</td><td class="num">42.881</td><td class="num">43.006</td><td class="num">43.122</td><td class="num">43.176</td><td class="num">43.401</td>
+        <td class="num total-cell">493.690</td>
+        <td class="num pct-cell">3.0%</td>
+    </tr><tr>
+        <td><span class="prod-dot" style="background:#10b981"></span> Consultoria</td>
+        <td class="num">7.800</td><td class="num">15.500</td><td class="num">5.500</td><td class="num">17.750</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td>
+        <td class="num total-cell">46.550</td>
+        <td class="num pct-cell">0.3%</td>
+    </tr><tr>
+        <td><span class="prod-dot" style="background:#06b6d4"></span> Setup</td>
+        <td class="num">8.000</td><td class="num">8.500</td><td class="num">16.500</td><td class="num">8.000</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td>
+        <td class="num total-cell">41.000</td>
+        <td class="num pct-cell">0.3%</td>
+    </tr><tr>
+        <td><span class="prod-dot" style="background:#ec4899"></span> Z.Promo</td>
+        <td class="num">1.206</td><td class="num">1.206</td><td class="num">1.200</td><td class="num">10.650</td><td class="num">1.200</td><td class="num">1.200</td><td class="num">1.200</td><td class="num">1.200</td><td class="num">1.236</td><td class="num">1.236</td><td class="num">1.236</td><td class="num">1.236</td>
+        <td class="num total-cell">24.006</td>
+        <td class="num pct-cell">0.1%</td>
+    </tr><tr>
+        <td><span class="prod-dot" style="background:#f97316"></span> Zukkin Market</td>
+        <td class="num">564</td><td class="num">564</td><td class="num">564</td><td class="num">564</td><td class="num">564</td><td class="num">564</td><td class="num">564</td><td class="num">564</td><td class="num">564</td><td class="num">564</td><td class="num">564</td><td class="num">564</td>
+        <td class="num total-cell">6.770</td>
+        <td class="num pct-cell">0.0%</td>
+    </tr><tr>
+        <td><span class="prod-dot" style="background:#64748b"></span> Projetos Pontuais</td>
+        <td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">1.500</td><td class="num">5.040</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td>
+        <td class="num total-cell">6.540</td>
+        <td class="num pct-cell">0.0%</td>
+    </tr>
+<tr style="font-weight:800;border-top:2px solid var(--border)">
+  <td style="text-align:left;color:var(--text);font-family:'DM Sans',sans-serif;font-weight:800">TOTAL</td>
+  <td class="num total-cell">1.274.735</td><td class="num total-cell">1.273.428</td><td class="num total-cell">1.514.514</td><td class="num total-cell">1.416.763</td><td class="num total-cell">1.353.251</td><td class="num total-cell">1.361.587</td><td class="num total-cell">1.356.291</td><td class="num total-cell">1.353.928</td><td class="num total-cell">1.356.635</td><td class="num total-cell">1.358.452</td><td class="num total-cell">1.361.583</td><td class="num total-cell">1.363.576</td>
+  <td class="num total-cell">16.344.742</td>
+  <td class="num pct-cell">100%</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- Client Detail Table -->
+<div class="section-title">Receita por Cliente — Visão Mensal Detalhada</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+  <th style="text-align:center;width:30px">#</th>
+  <th style="text-align:left;min-width:200px">Cliente</th>
+  <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
+  <th>Total</th>
+  <th>%</th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even">
+        <td class="rank">1</td>
+        <td class="client-name">
+            <div>Muffato</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ec489920;color:#ec4899;border:1px solid #ec489940">Z.Promo</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">159.344</td><td class="num ">157.674</td><td class="num ">161.274</td><td class="num ">152.229</td><td class="num ">135.729</td><td class="num ">136.801</td><td class="num ">136.801</td><td class="num ">136.801</td><td class="num ">136.801</td><td class="num ">136.801</td><td class="num ">136.801</td><td class="num ">136.801</td>
+        <td class="num total-cell">1.723.856</td>
+        <td class="num pct-cell">10.5%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">2</td>
+        <td class="client-name">
+            <div>Atakarejo</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">86.180</td><td class="num zero">-</td><td class="num ">172.360</td><td class="num ">82.103</td><td class="num ">80.744</td><td class="num ">80.744</td><td class="num ">80.744</td><td class="num ">80.744</td><td class="num ">80.744</td><td class="num ">80.744</td><td class="num ">80.744</td><td class="num ">80.744</td>
+        <td class="num total-cell">986.595</td>
+        <td class="num pct-cell">6.0%</td>
+    </tr><tr class="row-even">
+        <td class="rank">3</td>
+        <td class="client-name">
+            <div>Pague Menos</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">59.682</td><td class="num ">63.442</td><td class="num ">63.442</td><td class="num ">63.442</td><td class="num ">63.442</td><td class="num ">63.442</td><td class="num ">63.442</td><td class="num ">63.442</td><td class="num ">63.442</td><td class="num ">63.442</td><td class="num ">63.442</td><td class="num ">63.442</td>
+        <td class="num total-cell">757.547</td>
+        <td class="num pct-cell">4.6%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">4</td>
+        <td class="client-name">
+            <div>Swift</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">60.594</td><td class="num ">70.616</td><td class="num ">56.224</td><td class="num ">51.680</td><td class="num ">51.395</td><td class="num ">56.760</td><td class="num ">56.760</td><td class="num ">58.463</td><td class="num ">58.463</td><td class="num ">58.463</td><td class="num ">58.463</td><td class="num ">58.463</td>
+        <td class="num total-cell">696.343</td>
+        <td class="num pct-cell">4.3%</td>
+    </tr><tr class="row-even">
+        <td class="rank">5</td>
+        <td class="client-name">
+            <div>Grupo Pereira</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#64748b20;color:#64748b;border:1px solid #64748b40">Projetos Pontuais</span> <span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num zero">-</td><td class="num ">61.206</td><td class="num ">61.206</td><td class="num ">61.831</td><td class="num ">65.846</td><td class="num ">60.806</td><td class="num ">60.806</td><td class="num ">60.806</td><td class="num ">60.806</td><td class="num ">60.806</td><td class="num ">60.806</td><td class="num ">60.806</td>
+        <td class="num total-cell">675.731</td>
+        <td class="num pct-cell">4.1%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">6</td>
+        <td class="client-name">
+            <div>Grupo Pão de Açúcar</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">52.358</td><td class="num ">83.173</td><td class="num ">58.785</td><td class="num ">47.991</td><td class="num ">45.942</td><td class="num ">50.500</td><td class="num ">50.500</td><td class="num ">50.500</td><td class="num ">50.500</td><td class="num ">50.500</td><td class="num ">50.500</td><td class="num ">50.500</td>
+        <td class="num total-cell">641.750</td>
+        <td class="num pct-cell">3.9%</td>
+    </tr><tr class="row-even">
+        <td class="rank">7</td>
+        <td class="client-name">
+            <div>Savegnago</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">42.700</td><td class="num ">42.700</td><td class="num ">32.600</td><td class="num ">28.100</td><td class="num ">28.100</td><td class="num ">44.200</td><td class="num ">48.700</td><td class="num ">46.900</td><td class="num ">46.900</td><td class="num ">46.900</td><td class="num ">46.900</td><td class="num ">48.307</td>
+        <td class="num total-cell">503.007</td>
+        <td class="num pct-cell">3.1%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">8</td>
+        <td class="client-name">
+            <div>São Vicente</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">40.306</td><td class="num ">40.306</td><td class="num ">40.306</td><td class="num ">40.306</td><td class="num ">40.306</td><td class="num ">40.306</td><td class="num ">40.306</td><td class="num ">40.306</td><td class="num ">40.306</td><td class="num ">41.515</td><td class="num ">41.515</td><td class="num ">41.515</td>
+        <td class="num total-cell">487.300</td>
+        <td class="num pct-cell">3.0%</td>
+    </tr><tr class="row-even">
+        <td class="rank">9</td>
+        <td class="client-name">
+            <div>Vivo</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num zero">-</td><td class="num zero">-</td><td class="num ">32.020</td><td class="num ">51.606</td><td class="num ">60.885</td><td class="num ">46.885</td><td class="num ">50.296</td><td class="num ">46.000</td><td class="num ">46.000</td><td class="num ">46.000</td><td class="num ">46.000</td><td class="num ">46.000</td>
+        <td class="num total-cell">471.692</td>
+        <td class="num pct-cell">2.9%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">10</td>
+        <td class="client-name">
+            <div>Zona Sul</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">33.000</td><td class="num ">33.000</td><td class="num ">33.000</td><td class="num ">34.257</td><td class="num ">34.257</td><td class="num ">34.257</td><td class="num ">34.257</td><td class="num ">34.257</td><td class="num ">34.257</td><td class="num ">34.257</td><td class="num ">34.257</td><td class="num ">34.257</td>
+        <td class="num total-cell">407.316</td>
+        <td class="num pct-cell">2.5%</td>
+    </tr><tr class="row-even">
+        <td class="rank">11</td>
+        <td class="client-name">
+            <div>Nordestão</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">31.310</td><td class="num ">31.310</td><td class="num ">31.310</td><td class="num ">31.310</td><td class="num ">31.310</td><td class="num ">31.310</td><td class="num ">31.310</td><td class="num ">31.310</td><td class="num ">31.310</td><td class="num ">31.310</td><td class="num ">31.310</td><td class="num ">31.310</td>
+        <td class="num total-cell">375.723</td>
+        <td class="num pct-cell">2.3%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">12</td>
+        <td class="client-name">
+            <div>Grupo Coutinho</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">30.311</td><td class="num ">30.311</td><td class="num ">30.311</td><td class="num ">30.311</td><td class="num ">29.489</td><td class="num ">29.489</td><td class="num ">29.489</td><td class="num ">29.489</td><td class="num ">29.489</td><td class="num ">29.489</td><td class="num ">30.374</td><td class="num ">30.374</td>
+        <td class="num total-cell">358.926</td>
+        <td class="num pct-cell">2.2%</td>
+    </tr><tr class="row-even">
+        <td class="rank">13</td>
+        <td class="client-name">
+            <div>Bahamas</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">29.024</td><td class="num ">29.024</td><td class="num ">29.024</td><td class="num ">29.024</td><td class="num ">29.024</td><td class="num ">28.393</td><td class="num ">28.393</td><td class="num ">28.393</td><td class="num ">28.393</td><td class="num ">28.393</td><td class="num ">29.245</td><td class="num ">29.245</td>
+        <td class="num total-cell">345.578</td>
+        <td class="num pct-cell">2.1%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">14</td>
+        <td class="client-name">
+            <div>Drogarias Nissei</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">26.000</td><td class="num ">26.000</td><td class="num ">26.000</td><td class="num ">26.000</td><td class="num ">26.000</td><td class="num ">26.780</td><td class="num ">26.780</td><td class="num ">26.780</td><td class="num ">26.780</td><td class="num ">26.780</td><td class="num ">26.780</td><td class="num ">26.780</td>
+        <td class="num total-cell">317.460</td>
+        <td class="num pct-cell">1.9%</td>
+    </tr><tr class="row-even">
+        <td class="rank">15</td>
+        <td class="client-name">
+            <div>Super Nosso</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">25.123</td><td class="num zero">-</td><td class="num ">51.362</td><td class="num ">26.239</td><td class="num ">26.230</td><td class="num ">26.230</td><td class="num ">26.230</td><td class="num ">26.230</td><td class="num ">26.230</td><td class="num ">26.230</td><td class="num ">26.230</td><td class="num ">26.230</td>
+        <td class="num total-cell">312.562</td>
+        <td class="num pct-cell">1.9%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">16</td>
+        <td class="client-name">
+            <div>Barbosa</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">25.645</td><td class="num ">25.645</td><td class="num ">25.645</td><td class="num ">25.186</td><td class="num ">25.186</td><td class="num ">25.186</td><td class="num ">25.186</td><td class="num ">25.186</td><td class="num ">25.186</td><td class="num ">25.186</td><td class="num ">25.941</td><td class="num ">25.941</td>
+        <td class="num total-cell">305.118</td>
+        <td class="num pct-cell">1.9%</td>
+    </tr><tr class="row-even">
+        <td class="rank">17</td>
+        <td class="client-name">
+            <div>Spani</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num zero">-</td><td class="num ">27.000</td><td class="num ">27.000</td><td class="num ">27.000</td><td class="num ">27.000</td><td class="num ">27.000</td><td class="num ">27.000</td><td class="num ">27.810</td><td class="num ">27.810</td><td class="num ">27.810</td><td class="num ">27.810</td><td class="num ">27.810</td>
+        <td class="num total-cell">301.050</td>
+        <td class="num pct-cell">1.8%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">18</td>
+        <td class="client-name">
+            <div>Cooper</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">24.188</td><td class="num ">24.188</td><td class="num ">24.188</td><td class="num ">24.188</td><td class="num ">24.941</td><td class="num ">24.941</td><td class="num ">24.941</td><td class="num ">24.941</td><td class="num ">24.941</td><td class="num ">24.941</td><td class="num ">24.941</td><td class="num ">24.941</td>
+        <td class="num total-cell">296.278</td>
+        <td class="num pct-cell">1.8%</td>
+    </tr><tr class="row-even">
+        <td class="rank">19</td>
+        <td class="client-name">
+            <div>Hirota</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">24.561</td><td class="num ">24.561</td><td class="num ">24.561</td><td class="num ">24.561</td><td class="num ">25.298</td><td class="num ">24.561</td><td class="num ">24.561</td><td class="num ">24.561</td><td class="num ">24.561</td><td class="num ">24.561</td><td class="num ">24.561</td><td class="num ">24.561</td>
+        <td class="num total-cell">295.470</td>
+        <td class="num pct-cell">1.8%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">20</td>
+        <td class="client-name">
+            <div>DPK Dpaschoal</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">23.761</td><td class="num ">23.761</td><td class="num ">23.761</td><td class="num ">23.761</td><td class="num ">23.761</td><td class="num ">23.761</td><td class="num ">23.761</td><td class="num ">23.761</td><td class="num ">24.474</td><td class="num ">24.474</td><td class="num ">24.474</td><td class="num ">24.474</td>
+        <td class="num total-cell">287.983</td>
+        <td class="num pct-cell">1.8%</td>
+    </tr><tr class="row-even">
+        <td class="rank">21</td>
+        <td class="client-name">
+            <div>Oxxo</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">23.000</td><td class="num zero">-</td><td class="num ">46.000</td><td class="num ">23.000</td><td class="num ">23.000</td><td class="num ">23.000</td><td class="num ">23.000</td><td class="num ">23.000</td><td class="num ">23.000</td><td class="num ">23.000</td><td class="num ">23.000</td><td class="num ">23.000</td>
+        <td class="num total-cell">276.000</td>
+        <td class="num pct-cell">1.7%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">22</td>
+        <td class="client-name">
+            <div>Tenda</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">22.877</td><td class="num ">22.877</td><td class="num ">22.877</td><td class="num ">22.877</td><td class="num ">22.877</td><td class="num ">22.877</td><td class="num ">22.877</td><td class="num ">22.877</td><td class="num ">22.877</td><td class="num ">22.877</td><td class="num ">22.877</td><td class="num ">22.877</td>
+        <td class="num total-cell">274.521</td>
+        <td class="num pct-cell">1.7%</td>
+    </tr><tr class="row-even">
+        <td class="rank">23</td>
+        <td class="client-name">
+            <div>Master</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">21.816</td><td class="num ">21.816</td><td class="num ">21.816</td><td class="num ">21.816</td><td class="num ">21.816</td><td class="num ">21.816</td><td class="num ">21.816</td><td class="num ">21.816</td><td class="num ">22.470</td><td class="num ">22.470</td><td class="num ">22.470</td><td class="num ">22.470</td>
+        <td class="num total-cell">264.409</td>
+        <td class="num pct-cell">1.6%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">24</td>
+        <td class="client-name">
+            <div>Comercial Zaffari</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">19.500</td><td class="num ">19.500</td><td class="num ">19.500</td><td class="num ">20.243</td><td class="num ">20.243</td><td class="num ">20.243</td><td class="num ">20.243</td><td class="num ">20.243</td><td class="num ">20.243</td><td class="num ">20.243</td><td class="num ">20.243</td><td class="num ">20.243</td>
+        <td class="num total-cell">240.687</td>
+        <td class="num pct-cell">1.5%</td>
+    </tr><tr class="row-even">
+        <td class="rank">25</td>
+        <td class="client-name">
+            <div>Lopes</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">35.802</td><td class="num ">17.901</td><td class="num ">17.901</td><td class="num ">17.901</td><td class="num ">17.901</td><td class="num ">17.866</td><td class="num ">17.866</td><td class="num ">17.866</td><td class="num ">18.402</td><td class="num ">18.402</td><td class="num ">18.402</td><td class="num ">18.402</td>
+        <td class="num total-cell">234.615</td>
+        <td class="num pct-cell">1.4%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">26</td>
+        <td class="client-name">
+            <div>Comercial Esperança</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#06b6d420;color:#06b6d4;border:1px solid #06b6d440">Setup</span> <span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">14.000</td><td class="num ">26.500</td><td class="num ">26.500</td><td class="num ">18.000</td><td class="num ">18.000</td><td class="num ">18.000</td><td class="num ">18.000</td><td class="num ">18.000</td><td class="num ">18.000</td><td class="num ">18.180</td><td class="num ">18.180</td><td class="num ">18.180</td>
+        <td class="num total-cell">229.540</td>
+        <td class="num pct-cell">1.4%</td>
+    </tr><tr class="row-even">
+        <td class="rank">27</td>
+        <td class="client-name">
+            <div>Arcomix</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">16.885</td><td class="num ">16.885</td><td class="num ">16.885</td><td class="num ">16.885</td><td class="num ">16.885</td><td class="num ">17.391</td><td class="num ">17.391</td><td class="num ">17.391</td><td class="num ">17.391</td><td class="num ">17.391</td><td class="num ">17.391</td><td class="num ">17.391</td>
+        <td class="num total-cell">206.163</td>
+        <td class="num pct-cell">1.3%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">28</td>
+        <td class="client-name">
+            <div>Hiperideal</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num zero">-</td><td class="num ">16.690</td><td class="num ">18.557</td><td class="num ">18.557</td><td class="num ">18.557</td><td class="num ">18.557</td><td class="num ">19.114</td><td class="num ">19.114</td><td class="num ">19.114</td><td class="num ">19.114</td><td class="num ">19.114</td><td class="num ">19.114</td>
+        <td class="num total-cell">205.602</td>
+        <td class="num pct-cell">1.3%</td>
+    </tr><tr class="row-even">
+        <td class="rank">29</td>
+        <td class="client-name">
+            <div>Shibata</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">16.874</td><td class="num ">16.874</td><td class="num ">16.874</td><td class="num ">16.874</td><td class="num ">16.874</td><td class="num ">16.874</td><td class="num ">16.874</td><td class="num ">17.380</td><td class="num ">17.380</td><td class="num ">17.380</td><td class="num ">17.380</td><td class="num ">17.380</td>
+        <td class="num total-cell">205.020</td>
+        <td class="num pct-cell">1.3%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">30</td>
+        <td class="client-name">
+            <div>Big Mart</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">15.250</td><td class="num ">15.250</td><td class="num ">15.250</td><td class="num ">15.339</td><td class="num ">15.250</td><td class="num ">15.250</td><td class="num ">15.707</td><td class="num ">15.707</td><td class="num ">15.707</td><td class="num ">15.707</td><td class="num ">15.707</td><td class="num ">15.707</td>
+        <td class="num total-cell">185.832</td>
+        <td class="num pct-cell">1.1%</td>
+    </tr><tr class="row-even">
+        <td class="rank">31</td>
+        <td class="client-name">
+            <div>Costa Atacadão</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">19.163</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.450</td>
+        <td class="num total-cell">184.613</td>
+        <td class="num pct-cell">1.1%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">32</td>
+        <td class="client-name">
+            <div>Nova Casa</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">15.012</td><td class="num ">15.012</td><td class="num ">15.012</td><td class="num ">15.012</td><td class="num ">15.012</td><td class="num ">15.012</td><td class="num ">15.012</td><td class="num ">15.463</td><td class="num ">15.463</td><td class="num ">15.463</td><td class="num ">15.463</td><td class="num ">15.463</td>
+        <td class="num total-cell">182.400</td>
+        <td class="num pct-cell">1.1%</td>
+    </tr><tr class="row-even">
+        <td class="rank">33</td>
+        <td class="client-name">
+            <div>Cantu Pneus</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">15.000</td><td class="num ">15.000</td><td class="num zero">-</td><td class="num ">30.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td><td class="num ">15.000</td>
+        <td class="num total-cell">180.000</td>
+        <td class="num pct-cell">1.1%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">34</td>
+        <td class="client-name">
+            <div>Proença</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">14.120</td><td class="num ">14.120</td><td class="num ">14.120</td><td class="num ">14.658</td><td class="num ">14.658</td><td class="num ">14.658</td><td class="num ">14.658</td><td class="num ">14.658</td><td class="num ">14.658</td><td class="num ">14.658</td><td class="num ">14.658</td><td class="num ">14.658</td>
+        <td class="num total-cell">174.283</td>
+        <td class="num pct-cell">1.1%</td>
+    </tr><tr class="row-even">
+        <td class="rank">35</td>
+        <td class="client-name">
+            <div>Líder Atacadista</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ec489920;color:#ec4899;border:1px solid #ec489940">Z.Promo</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">14.169</td><td class="num ">14.169</td><td class="num ">10.200</td><td class="num ">13.700</td><td class="num ">13.700</td><td class="num ">13.700</td><td class="num ">13.700</td><td class="num ">13.700</td><td class="num ">14.111</td><td class="num ">14.111</td><td class="num ">14.111</td><td class="num ">14.111</td>
+        <td class="num total-cell">163.482</td>
+        <td class="num pct-cell">1.0%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">36</td>
+        <td class="client-name">
+            <div>São Luiz</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">13.490</td><td class="num ">13.490</td><td class="num ">13.490</td><td class="num ">13.500</td><td class="num ">13.500</td><td class="num ">13.500</td><td class="num ">13.500</td><td class="num ">13.500</td><td class="num ">13.500</td><td class="num ">13.500</td><td class="num ">13.500</td><td class="num ">13.500</td>
+        <td class="num total-cell">161.970</td>
+        <td class="num pct-cell">1.0%</td>
+    </tr><tr class="row-even">
+        <td class="rank">37</td>
+        <td class="client-name">
+            <div>Zaffari</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">13.230</td><td class="num ">13.230</td><td class="num ">13.230</td><td class="num ">13.230</td><td class="num ">13.230</td><td class="num ">13.627</td><td class="num ">13.627</td><td class="num ">13.627</td><td class="num ">13.627</td><td class="num ">13.627</td><td class="num ">13.627</td><td class="num ">13.627</td>
+        <td class="num total-cell">161.538</td>
+        <td class="num pct-cell">1.0%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">38</td>
+        <td class="client-name">
+            <div>Votorantim</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span></div>
+        </td>
+        <td class="num zero">-</td><td class="num ">12.900</td><td class="num ">12.900</td><td class="num ">12.900</td><td class="num ">12.900</td><td class="num ">12.900</td><td class="num ">12.900</td><td class="num ">12.900</td><td class="num ">12.900</td><td class="num ">13.287</td><td class="num ">13.287</td><td class="num ">13.287</td>
+        <td class="num total-cell">143.061</td>
+        <td class="num pct-cell">0.9%</td>
+    </tr><tr class="row-even">
+        <td class="rank">39</td>
+        <td class="client-name">
+            <div>Goodbom</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">17.449</td><td class="num ">17.449</td><td class="num ">17.449</td><td class="num ">17.449</td><td class="num ">8.784</td><td class="num ">8.784</td><td class="num ">8.784</td><td class="num ">9.048</td><td class="num ">9.048</td><td class="num ">9.048</td><td class="num ">9.048</td><td class="num ">9.048</td>
+        <td class="num total-cell">141.391</td>
+        <td class="num pct-cell">0.9%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">40</td>
+        <td class="client-name">
+            <div>Tonin</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">11.143</td><td class="num ">11.762</td><td class="num ">11.762</td><td class="num ">11.762</td><td class="num ">11.762</td><td class="num ">11.762</td><td class="num ">11.762</td><td class="num ">11.762</td><td class="num ">11.762</td><td class="num ">11.762</td><td class="num ">11.762</td><td class="num ">11.762</td>
+        <td class="num total-cell">140.520</td>
+        <td class="num pct-cell">0.9%</td>
+    </tr><tr class="row-even">
+        <td class="rank">41</td>
+        <td class="client-name">
+            <div>Formosa</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#10b98120;color:#10b981;border:1px solid #10b98140">Consultoria</span> <span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">7.956</td><td class="num ">17.956</td><td class="num ">7.956</td><td class="num ">25.706</td><td class="num ">8.195</td><td class="num ">8.195</td><td class="num ">8.195</td><td class="num ">8.195</td><td class="num ">8.195</td><td class="num ">8.195</td><td class="num ">8.195</td><td class="num ">8.195</td>
+        <td class="num total-cell">125.136</td>
+        <td class="num pct-cell">0.8%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">42</td>
+        <td class="client-name">
+            <div>Rede Krill</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">10.111</td><td class="num ">10.111</td><td class="num ">10.111</td><td class="num ">10.111</td><td class="num ">10.111</td><td class="num ">10.111</td><td class="num ">10.414</td><td class="num ">10.414</td><td class="num ">10.414</td><td class="num ">10.414</td><td class="num ">10.414</td><td class="num ">10.414</td>
+        <td class="num total-cell">123.149</td>
+        <td class="num pct-cell">0.8%</td>
+    </tr><tr class="row-even">
+        <td class="rank">43</td>
+        <td class="client-name">
+            <div>Super do Povo</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">9.382</td><td class="num ">9.382</td><td class="num ">9.382</td><td class="num ">9.382</td><td class="num ">9.382</td><td class="num ">9.382</td><td class="num ">9.382</td><td class="num ">9.382</td><td class="num ">9.382</td><td class="num ">9.382</td><td class="num ">9.663</td><td class="num ">9.663</td>
+        <td class="num total-cell">113.147</td>
+        <td class="num pct-cell">0.7%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">44</td>
+        <td class="client-name">
+            <div>Confiança</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">8.673</td><td class="num ">9.042</td><td class="num ">9.042</td><td class="num ">9.042</td><td class="num ">9.042</td><td class="num ">9.042</td><td class="num ">9.042</td><td class="num ">9.042</td><td class="num ">9.042</td><td class="num ">9.042</td><td class="num ">9.042</td><td class="num ">9.042</td>
+        <td class="num total-cell">108.136</td>
+        <td class="num pct-cell">0.7%</td>
+    </tr><tr class="row-even">
+        <td class="rank">45</td>
+        <td class="client-name">
+            <div>Vila Nova</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num zero">-</td><td class="num zero">-</td><td class="num ">10.000</td><td class="num ">10.000</td><td class="num ">10.000</td><td class="num ">10.000</td><td class="num ">10.000</td><td class="num ">10.000</td><td class="num ">10.000</td><td class="num ">10.000</td><td class="num ">10.000</td><td class="num ">10.000</td>
+        <td class="num total-cell">100.000</td>
+        <td class="num pct-cell">0.6%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">46</td>
+        <td class="client-name">
+            <div>Nosso Atacarejo</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#10b98120;color:#10b981;border:1px solid #10b98140">Consultoria</span> <span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">10.800</td><td class="num ">7.800</td><td class="num ">7.800</td><td class="num ">7.800</td><td class="num ">7.800</td><td class="num ">7.800</td><td class="num ">7.800</td><td class="num ">7.800</td><td class="num ">7.800</td><td class="num ">7.800</td><td class="num ">7.800</td><td class="num ">7.800</td>
+        <td class="num total-cell">96.600</td>
+        <td class="num pct-cell">0.6%</td>
+    </tr><tr class="row-even">
+        <td class="rank">47</td>
+        <td class="client-name">
+            <div>Moniari</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">7.595</td><td class="num ">7.595</td><td class="num ">7.595</td><td class="num ">7.595</td><td class="num ">7.595</td><td class="num ">7.595</td><td class="num ">7.595</td><td class="num ">7.595</td><td class="num ">7.823</td><td class="num ">7.823</td><td class="num ">7.823</td><td class="num ">7.823</td>
+        <td class="num total-cell">92.052</td>
+        <td class="num pct-cell">0.6%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">48</td>
+        <td class="client-name">
+            <div>Queiroz</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">14.211</td><td class="num ">14.816</td><td class="num ">14.816</td><td class="num ">14.816</td><td class="num ">14.816</td><td class="num ">14.816</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td>
+        <td class="num total-cell">88.292</td>
+        <td class="num pct-cell">0.5%</td>
+    </tr><tr class="row-even">
+        <td class="rank">49</td>
+        <td class="client-name">
+            <div>Vila Sul</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">7.700</td><td class="num ">7.700</td><td class="num ">7.700</td><td class="num ">7.993</td><td class="num ">6.748</td><td class="num ">6.748</td><td class="num ">6.748</td><td class="num ">6.748</td><td class="num ">6.748</td><td class="num ">6.748</td><td class="num ">6.748</td><td class="num ">6.748</td>
+        <td class="num total-cell">85.075</td>
+        <td class="num pct-cell">0.5%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">50</td>
+        <td class="client-name">
+            <div>De Angelina</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">14.688</td><td class="num ">7.344</td><td class="num ">6.155</td><td class="num ">6.155</td><td class="num ">6.155</td><td class="num ">6.155</td><td class="num ">6.155</td><td class="num ">6.155</td><td class="num ">6.155</td><td class="num ">6.155</td><td class="num ">6.155</td><td class="num ">6.155</td>
+        <td class="num total-cell">83.582</td>
+        <td class="num pct-cell">0.5%</td>
+    </tr><tr class="row-even">
+        <td class="rank">51</td>
+        <td class="client-name">
+            <div>Federzoni</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">5.795</td><td class="num ">5.795</td><td class="num ">5.795</td><td class="num ">6.016</td><td class="num ">6.016</td><td class="num ">6.016</td><td class="num ">6.016</td><td class="num ">6.016</td><td class="num ">6.016</td><td class="num ">6.016</td><td class="num ">6.016</td><td class="num ">6.016</td>
+        <td class="num total-cell">71.525</td>
+        <td class="num pct-cell">0.4%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">52</td>
+        <td class="client-name">
+            <div>Araujo Super</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">5.676</td><td class="num ">5.918</td><td class="num ">5.918</td><td class="num ">5.918</td><td class="num ">5.918</td><td class="num ">5.918</td><td class="num ">5.918</td><td class="num ">5.918</td><td class="num ">5.918</td><td class="num ">5.918</td><td class="num ">5.918</td><td class="num ">5.918</td>
+        <td class="num total-cell">70.777</td>
+        <td class="num pct-cell">0.4%</td>
+    </tr><tr class="row-even">
+        <td class="rank">53</td>
+        <td class="client-name">
+            <div>Guarani</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#f9731620;color:#f97316;border:1px solid #f9731640">Zukkin Market</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">5.724</td><td class="num ">5.724</td><td class="num ">5.724</td><td class="num ">5.725</td><td class="num ">5.725</td><td class="num ">5.725</td><td class="num ">5.725</td><td class="num ">5.725</td><td class="num ">5.725</td><td class="num ">5.725</td><td class="num ">5.725</td><td class="num ">5.725</td>
+        <td class="num total-cell">68.694</td>
+        <td class="num pct-cell">0.4%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">54</td>
+        <td class="client-name">
+            <div>Dalben</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">5.498</td><td class="num ">5.498</td><td class="num ">5.498</td><td class="num ">5.498</td><td class="num ">5.498</td><td class="num ">5.498</td><td class="num ">5.498</td><td class="num ">5.498</td><td class="num ">5.663</td><td class="num ">5.663</td><td class="num ">5.663</td><td class="num ">5.663</td>
+        <td class="num total-cell">66.633</td>
+        <td class="num pct-cell">0.4%</td>
+    </tr><tr class="row-even">
+        <td class="rank">55</td>
+        <td class="client-name">
+            <div>RedeMix</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">4.926</td><td class="num ">4.926</td><td class="num ">4.926</td><td class="num ">4.926</td><td class="num ">4.926</td><td class="num ">4.926</td><td class="num ">5.073</td><td class="num ">5.073</td><td class="num ">5.073</td><td class="num ">5.073</td><td class="num ">5.073</td><td class="num ">5.073</td>
+        <td class="num total-cell">59.995</td>
+        <td class="num pct-cell">0.4%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">56</td>
+        <td class="client-name">
+            <div>Vanguarda</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">4.398</td><td class="num ">4.844</td><td class="num ">5.059</td><td class="num ">5.059</td><td class="num ">5.059</td><td class="num ">5.059</td><td class="num ">5.059</td><td class="num ">5.059</td><td class="num ">5.059</td><td class="num ">5.059</td><td class="num ">5.059</td><td class="num ">5.059</td>
+        <td class="num total-cell">59.836</td>
+        <td class="num pct-cell">0.4%</td>
+    </tr><tr class="row-even">
+        <td class="rank">57</td>
+        <td class="client-name">
+            <div>Gigante Atacadista</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">4.800</td><td class="num ">4.800</td><td class="num ">4.800</td><td class="num ">4.800</td><td class="num ">4.800</td><td class="num ">4.800</td><td class="num ">4.944</td><td class="num ">4.944</td><td class="num ">4.944</td><td class="num ">4.944</td><td class="num ">4.944</td><td class="num ">4.944</td>
+        <td class="num total-cell">58.464</td>
+        <td class="num pct-cell">0.4%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">58</td>
+        <td class="client-name">
+            <div>Grupo Gmais</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">5.724</td><td class="num ">5.724</td><td class="num ">4.524</td><td class="num ">4.524</td><td class="num ">4.524</td><td class="num ">4.524</td><td class="num ">4.524</td><td class="num ">4.524</td><td class="num ">4.524</td><td class="num ">4.524</td><td class="num ">4.524</td><td class="num ">4.659</td>
+        <td class="num total-cell">56.822</td>
+        <td class="num pct-cell">0.3%</td>
+    </tr><tr class="row-even">
+        <td class="rank">59</td>
+        <td class="client-name">
+            <div>Super Adega</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num ">5.700</td><td class="num ">5.700</td><td class="num ">5.700</td><td class="num ">5.700</td><td class="num ">5.700</td><td class="num ">5.700</td><td class="num ">5.700</td><td class="num ">5.871</td><td class="num ">5.871</td>
+        <td class="num total-cell">51.642</td>
+        <td class="num pct-cell">0.3%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">60</td>
+        <td class="client-name">
+            <div>Paulista</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">4.174</td><td class="num ">4.174</td><td class="num ">4.174</td><td class="num ">4.333</td><td class="num ">4.333</td><td class="num ">4.333</td><td class="num ">4.333</td><td class="num ">4.333</td><td class="num ">4.333</td><td class="num ">4.333</td><td class="num ">4.333</td><td class="num ">4.333</td>
+        <td class="num total-cell">51.515</td>
+        <td class="num pct-cell">0.3%</td>
+    </tr><tr class="row-even">
+        <td class="rank">61</td>
+        <td class="client-name">
+            <div>Galassi</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#06b6d420;color:#06b6d4;border:1px solid #06b6d440">Setup</span> <span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num zero">-</td><td class="num zero">-</td><td class="num ">9.500</td><td class="num ">11.500</td><td class="num ">3.500</td><td class="num ">3.500</td><td class="num ">3.500</td><td class="num ">3.500</td><td class="num ">3.500</td><td class="num ">3.500</td><td class="num ">3.500</td><td class="num ">3.500</td>
+        <td class="num total-cell">49.000</td>
+        <td class="num pct-cell">0.3%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">62</td>
+        <td class="client-name">
+            <div>Armazém da Maria</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.196</td><td class="num ">3.196</td>
+        <td class="num total-cell">37.416</td>
+        <td class="num pct-cell">0.2%</td>
+    </tr><tr class="row-even">
+        <td class="rank">63</td>
+        <td class="client-name">
+            <div>Armazém da Maria - Campinas</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.103</td><td class="num ">3.196</td><td class="num ">3.196</td>
+        <td class="num total-cell">37.416</td>
+        <td class="num pct-cell">0.2%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">64</td>
+        <td class="client-name">
+            <div>Rebouças Super</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#10b98120;color:#10b981;border:1px solid #10b98140">Consultoria</span> <span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span></div>
+        </td>
+        <td class="num ">1.370</td><td class="num ">6.870</td><td class="num ">6.870</td><td class="num ">1.370</td><td class="num ">1.370</td><td class="num ">1.370</td><td class="num ">1.370</td><td class="num ">1.370</td><td class="num ">1.370</td><td class="num ">1.411</td><td class="num ">1.411</td><td class="num ">1.411</td>
+        <td class="num total-cell">27.561</td>
+        <td class="num pct-cell">0.2%</td>
+    </tr><tr class="row-even">
+        <td class="rank">65</td>
+        <td class="client-name">
+            <div>Ricoy</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span></div>
+        </td>
+        <td class="num ">20.000</td><td class="num ">5.000</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td>
+        <td class="num total-cell">25.000</td>
+        <td class="num pct-cell">0.2%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">66</td>
+        <td class="client-name">
+            <div>Celeiro</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#ef444420;color:#ef4444;border:1px solid #ef444440">Z.Robot</span> <span class="prod-tag" style="background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40">Zukkin Analytics + ZGO</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">5.861</td><td class="num ">5.861</td><td class="num ">5.261</td><td class="num ">5.261</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td>
+        <td class="num total-cell">22.246</td>
+        <td class="num pct-cell">0.1%</td>
+    </tr><tr class="row-even">
+        <td class="rank">67</td>
+        <td class="client-name">
+            <div>Barão</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">Zukkin Analytics + Pesquisas</span> <span class="prod-tag" style="background:#8b5cf620;color:#8b5cf6;border:1px solid #8b5cf640">Zukkin Pricing</span></div>
+        </td>
+        <td class="num ">10.600</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td>
+        <td class="num total-cell">10.600</td>
+        <td class="num pct-cell">0.1%</td>
+    </tr><tr class="row-odd">
+        <td class="rank">68</td>
+        <td class="client-name">
+            <div>Serra Azul</div>
+            <div class="prod-tags"><span class="prod-tag" style="background:#64748b20;color:#64748b;border:1px solid #64748b40">Projetos Pontuais</span></div>
+        </td>
+        <td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num ">1.500</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td><td class="num zero">-</td>
+        <td class="num total-cell">1.500</td>
+        <td class="num pct-cell">0.0%</td>
+    </tr>
+</tbody>
+</table>
+</div>
+
+<div class="footer">
+  Zukkin Brasil Inteligência de Mercado S/A — CNPJ: 28.346.370/0001-02<br>
+  Documento confidencial preparado para fins de Due Diligence
+</div>
+
+</div>
+
+<script>
+const monthLabels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+const colors = {blue:'#3b82f6',green:'#10b981',red:'#ef4444',purple:'#8b5cf6',amber:'#f59e0b',cyan:'#06b6d4',pink:'#ec4899',orange:'#f97316'};
+
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#1e293b';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+
+function fmtBRL(v) {
+  return 'R$ ' + (v/1000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'k';
+}
+
+// Top 10 Clients - Horizontal Bar
+new Chart(document.getElementById('chartTop10'), {
+  type: 'bar',
+  data: {
+    labels: ["Muffato", "Atakarejo", "Pague Menos", "Swift", "Grupo Pereira", "Grupo P\u00e3o de A\u00e7\u00facar", "Savegnago", "S\u00e3o Vicente", "Vivo", "Zona Sul"],
+    datasets: [{
+      data: [1723856, 986595, 757547, 696343, 675731, 641750, 503007, 487300, 471692, 407316],
+      backgroundColor: ['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#06b6d4','#ec4899','#f97316','#64748b','#a855f7'],
+      borderRadius: 6,
+      barThickness: 28,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {display: false},
+      tooltip: {callbacks: {label: ctx => fmtBRL(ctx.raw)}}
+    },
+    scales: {
+      x: {ticks: {callback: v => fmtBRL(v)}, grid: {color: '#1e293b40'}},
+      y: {grid: {display: false}}
+    }
+  }
+});
+
+// Products - Doughnut
+new Chart(document.getElementById('chartProducts'), {
+  type: 'doughnut',
+  data: {
+    labels: ["Zukkin Analytics + Pesquisas", "Zukkin Pricing", "Z.Robot", "Zukkin Analytics + ZGO", "Consultoria", "Setup", "Z.Promo", "Zukkin Market", "Projetos Pontuais"],
+    datasets: [{
+      data: [7619148, 7075004, 1032034, 493690, 46550, 41000, 24006, 6770, 6540],
+      backgroundColor: ["#3b82f6", "#8b5cf6", "#ef4444", "#f59e0b", "#10b981", "#06b6d4", "#ec4899", "#f97316", "#64748b"],
+      borderWidth: 0,
+      hoverOffset: 8,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '55%',
+    plugins: {
+      legend: {position: 'right', labels: {padding: 12, usePointStyle: true, pointStyle: 'rectRounded', font: {size: 11}}},
+      tooltip: {callbacks: {label: ctx => ctx.label + ': ' + fmtBRL(ctx.raw) + ' (' + (ctx.raw/16344742*100).toFixed(1) + '%)'}}
+    }
+  }
+});
+
+// Monthly Revenue - Area
+new Chart(document.getElementById('chartMonthly'), {
+  type: 'line',
+  data: {
+    labels: monthLabels,
+    datasets: [{
+      label: 'Receita Mensal',
+      data: [1274735, 1273428, 1514514, 1416763, 1353251, 1361587, 1356291, 1353928, 1356635, 1358452, 1361583, 1363576],
+      fill: true,
+      backgroundColor: '#3b82f620',
+      borderColor: '#3b82f6',
+      borderWidth: 2.5,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: '#3b82f6',
+      pointBorderColor: '#0a0e1a',
+      pointBorderWidth: 2,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {display: false},
+      tooltip: {callbacks: {label: ctx => fmtBRL(ctx.raw)}}
+    },
+    scales: {
+      y: {ticks: {callback: v => fmtBRL(v)}, grid: {color: '#1e293b40'}},
+      x: {grid: {display: false}}
+    }
+  }
+});
+
+// Pareto
+const paretoCtx = document.getElementById('chartPareto');
+new Chart(paretoCtx, {
+  type: 'bar',
+  data: {
+    labels: ["Muffato", "Atakarejo", "Pague Menos", "Swift", "Grupo Pereira", "Grupo P\u00e3o de A\u00e7\u00facar", "Savegnago", "S\u00e3o Vicente", "Vivo", "Zona Sul", "Nordest\u00e3o", "Grupo Coutinho", "Bahamas", "Drogarias Nissei", "Super Nosso", "Barbosa", "Spani", "Cooper", "Hirota", "DPK Dpaschoal", "Oxxo", "Tenda", "Master", "Comercial Zaffari", "Lopes", "Comercial Esperan\u00e7a", "Arcomix", "Hiperideal", "Shibata", "Big Mart", "Costa Atacad\u00e3o", "Nova Casa", "Cantu Pneus", "Proen\u00e7a", "L\u00edder Atacadista", "S\u00e3o Luiz", "Zaffari", "Votorantim", "Goodbom", "Tonin", "Formosa", "Rede Krill", "Super do Povo", "Confian\u00e7a", "Vila Nova", "Nosso Atacarejo", "Moniari", "Queiroz", "Vila Sul", "De Angelina", "Federzoni", "Araujo Super", "Guarani", "Dalben", "RedeMix", "Vanguarda", "Gigante Atacadista", "Grupo Gmais", "Super Adega", "Paulista", "Galassi", "Armaz\u00e9m da Maria", "Armaz\u00e9m da Maria - Campinas", "Rebou\u00e7as Super", "Ricoy", "Celeiro", "Bar\u00e3o", "Serra Azul"],
+    datasets: [
+      {
+        type: 'bar',
+        label: 'Receita',
+        data: [1723856, 986595, 757547, 696343, 675731, 641750, 503007, 487300, 471692, 407316, 375723, 358926, 345578, 317460, 312562, 305118, 301050, 296278, 295470, 287983, 276000, 274521, 264409, 240687, 234615, 229540, 206163, 205602, 205020, 185832, 184613, 182400, 180000, 174283, 163482, 161970, 161538, 143061, 141391, 140520, 125136, 123149, 113147, 108136, 100000, 96600, 92052, 88292, 85075, 83582, 71525, 70777, 68694, 66633, 59995, 59836, 58464, 56822, 51642, 51515, 49000, 37416, 37416, 27561, 25000, 22246, 10600, 1500],
+        backgroundColor: '#3b82f660',
+        borderRadius: 2,
+        yAxisID: 'y',
+        barPercentage: 1,
+        categoryPercentage: 0.9,
+      },
+      {
+        type: 'line',
+        label: '% Acumulado',
+        data: [10.5, 16.6, 21.2, 25.5, 29.6, 33.5, 36.6, 39.6, 42.5, 45.0, 47.3, 49.5, 51.6, 53.5, 55.4, 57.3, 59.1, 61.0, 62.8, 64.5, 66.2, 67.9, 69.5, 71.0, 72.4, 73.8, 75.1, 76.3, 77.6, 78.7, 79.9, 81.0, 82.1, 83.2, 84.2, 85.1, 86.1, 87.0, 87.9, 88.7, 89.5, 90.3, 90.9, 91.6, 92.2, 92.8, 93.4, 93.9, 94.4, 94.9, 95.4, 95.8, 96.2, 96.6, 97.0, 97.4, 97.7, 98.1, 98.4, 98.7, 99.0, 99.2, 99.5, 99.6, 99.8, 99.9, 100.0, 100.0],
+        borderColor: '#f59e0b',
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0.2,
+        yAxisID: 'y1',
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {display: true, labels: {usePointStyle: true, pointStyle: 'rectRounded', font: {size: 10}}},
+      tooltip: {callbacks: {label: ctx => ctx.dataset.label === 'Receita' ? fmtBRL(ctx.raw) : ctx.raw + '%'}}
+    },
+    scales: {
+      x: {display: false},
+      y: {position: 'left', ticks: {callback: v => fmtBRL(v)}, grid: {color: '#1e293b40'}},
+      y1: {position: 'right', min: 0, max: 100, ticks: {callback: v => v + '%'}, grid: {display: false}}
+    }
+  }
+});
+</script>
+</body>
+</html>
