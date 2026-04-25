@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zukkin Brasil — Data Room</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: #0a0e1a; color: #e2e8f0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        .header { width: 100%; padding: 48px 0 32px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .logo { font-family: 'DM Serif Display', serif; font-size: 3rem; color: #fff; letter-spacing: -2px; }
+        .logo span { color: #dc2626; }
+        .subtitle { margin-top: 8px; font-size: 0.95rem; color: #64748b; letter-spacing: 1px; }
+        .badge { display: inline-block; margin-top: 16px; padding: 6px 16px; background: rgba(220, 38, 38, 0.1); border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 20px; font-size: 0.7rem; color: #f87171; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
+        .container { max-width: 900px; width: 100%; padding: 48px 24px 80px; }
+        .disclosure-box { background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 20px 24px; margin-bottom: 40px; }
+        .disclosure-box .dtitle { font-size: 0.72rem; color: #fbbf24; letter-spacing: 1.8px; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+        .disclosure-box p { font-size: 0.85rem; line-height: 1.6; color: #cbd5e1; }
+        .disclosure-box p + p { margin-top: 8px; }
+        .section-title { font-size: 0.7rem; color: #64748b; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 48px; }
+        .card { background: #111827; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 28px; transition: all 0.3s ease; text-decoration: none; color: inherit; display: block; position: relative; overflow: hidden; }
+        .card:hover { border-color: rgba(220, 38, 38, 0.4); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        .card-number { font-family: 'DM Serif Display', serif; font-size: 2.5rem; color: rgba(255,255,255,0.06); position: absolute; top: 12px; right: 20px; }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 16px; }
+        .card h3 { font-size: 1.05rem; font-weight: 600; color: #f1f5f9; margin-bottom: 8px; }
+        .card p { font-size: 0.82rem; color: #94a3b8; line-height: 1.5; }
+        .card .tag { display: inline-block; margin-top: 12px; padding: 3px 10px; border-radius: 6px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.5px; }
+        .tag-red { background: rgba(220,38,38,0.15); color: #f87171; }
+        .tag-blue { background: rgba(59,130,246,0.15); color: #60a5fa; }
+        .tag-green { background: rgba(34,197,94,0.15); color: #4ade80; }
+        .tag-amber { background: rgba(245,158,11,0.15); color: #fbbf24; }
+        .tag-purple { background: rgba(139,92,246,0.15); color: #a78bfa; }
+        .card-full { grid-column: 1 / -1; }
+        .kpi-row { display: flex; gap: 24px; justify-content: center; margin-bottom: 48px; flex-wrap: wrap; }
+        .kpi { text-align: center; }
+        .kpi-value { font-family: 'DM Serif Display', serif; font-size: 1.8rem; color: #dc2626; }
+        .kpi-label { font-size: 0.65rem; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
+        .footer { text-align: center; padding: 32px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 0.75rem; color: #475569; width: 100%; line-height: 1.7; }
+        @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .kpi-row { gap: 16px; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Zukkin<span>.</span></div>
+        <div class="subtitle">Inteligência de preços para o varejo</div>
+        <div class="badge">Confidencial — Due Diligence 2026</div>
+    </div>
+    <div class="container">
+        <div class="disclosure-box">
+            <div class="dtitle">⚠ Aviso de Sala — DD entre Players do Mesmo Setor</div>
+            <p>Este ambiente contém informações preparadas para avaliação preliminar de interesse pela Selbetti. Dado que a Selbetti atua em segmento adjacente ao da Zukkin, informações nominativas de clientes, remuneração individualizada, contratos específicos e pipeline comercial serão disponibilizadas via clean team após assinatura de LOI com NDA específico (cláusulas de non-use e non-solicit).</p>
+            <p>As informações aqui contidas são confidenciais. A navegação neste data room não constitui oferta, proposta vinculante ou compromisso de qualquer natureza.</p>
+        </div>
+        <div class="kpi-row">
+            <div class="kpi"><div class="kpi-value">R$ 16M</div><div class="kpi-label">Receita 2025</div></div>
+            <div class="kpi"><div class="kpi-value">18%</div><div class="kpi-label">Margem EBITDA</div></div>
+            <div class="kpi"><div class="kpi-value">68</div><div class="kpi-label">Clientes Ativos</div></div>
+            <div class="kpi"><div class="kpi-value">10 anos</div><div class="kpi-label">De Operação</div></div>
+        </div>
+        <div class="section-title">Documentos disponíveis</div>
+        <div class="grid">
+            <a class="card card-full" href="deck-investidores.html">
+                <div class="card-number">01</div>
+                <div class="card-icon" style="background:rgba(220,38,38,0.15);">📊</div>
+                <h3>Investor Deck</h3>
+                <p>Visão geral da empresa, produto, mercado, tração financeira e tese de investimento. Pitch completo.</p>
+                <span class="tag tag-red">Visão Estratégica</span>
+            </a>
+            <a class="card" href="dre-historico.html">
+                <div class="card-number">02</div>
+                <div class="card-icon" style="background:rgba(59,130,246,0.15);">📈</div>
+                <h3>DRE Histórico</h3>
+                <p>Demonstração de Resultado mensal dos últimos 5 anos. Visão gerencial e contábil com toggle interativo.</p>
+                <span class="tag tag-blue">Financeiro</span>
+            </a>
+            <a class="card" href="kpis-operacionais.html">
+                <div class="card-number">03</div>
+                <div class="card-icon" style="background:rgba(34,197,94,0.15);">🎯</div>
+                <h3>KPIs Operacionais</h3>
+                <p>MRR, ARR, Churn, CAC, LTV, NPS e métricas SaaS. Dados realizados Q1 2026 + histórico.</p>
+                <span class="tag tag-green">Operacional</span>
+            </a>
+            <a class="card" href="receita-cliente-produto.html">
+                <div class="card-number">04</div>
+                <div class="card-icon" style="background:rgba(245,158,11,0.15);">💰</div>
+                <h3>Receita por Cliente e Produto</h3>
+                <p>Breakdown da receita por cliente (codificado, sem nomes) e produto. Análise de concentração e ticket.</p>
+                <span class="tag tag-amber">Revenue</span>
+            </a>
+            <a class="card" href="estrategia-comercial.html">
+                <div class="card-number">05</div>
+                <div class="card-icon" style="background:rgba(139,92,246,0.15);">🚀</div>
+                <h3>Estratégia Comercial</h3>
+                <p>Funil de vendas, canais de aquisição, taxa de conversão, estratégia de growth e projeção de pipeline.</p>
+                <span class="tag tag-purple">Comercial</span>
+            </a>
+            <a class="card" href="headcount-remuneracao.html">
+                <div class="card-number">06</div>
+                <div class="card-icon" style="background:rgba(34,197,94,0.15);">👥</div>
+                <h3>Headcount & Remuneração</h3>
+                <p>Quadro por departamento com cargo, vínculo (CLT/PJ/Estágio), produto e remuneração. Nomes individuais disponíveis pós-LOI.</p>
+                <span class="tag tag-green">Pessoas</span>
+            </a>
+            <a class="card" href="revenue-retention.html">
+                <div class="card-number">07</div>
+                <div class="card-icon" style="background:rgba(59,130,246,0.15);">🔄</div>
+                <h3>Revenue Retention — GRR & NRR</h3>
+                <p>GRR e NRR ano a ano (2023–2025), receita mensal por cliente (codificado), cohort e heatmap.</p>
+                <span class="tag tag-blue">Retention</span>
+            </a>
+            <a class="card" href="nps-2026.html">
+                <div class="card-number">08</div>
+                <div class="card-icon" style="background:rgba(34,197,94,0.15);">📋</div>
+                <h3>NPS — Satisfação Q1 2026</h3>
+                <p>263 respostas, NPS médio +65, análise por produto (Pricing vs Analytics), ranking por cliente (codificado) e detratores.</p>
+                <span class="tag tag-green">Satisfação</span>
+            </a>
+        </div>
+    </div>
+    <div class="footer">
+        <strong>Zukkin Brasil Inteligência de Mercado S/A</strong><br>
+        CNPJ: 28.346.370/0001-02 · Documento confidencial preparado para Due Diligence — Selbetti<br>
+        Projeções sujeitas a revisão · Abril 2026
+    </div>
+</body>
+</html>

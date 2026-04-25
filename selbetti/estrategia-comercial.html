@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zukkin Brasil — Estratégia Comercial, Funil & Conversão</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'DM Sans',sans-serif;background:#0a0e1a;color:#e2e8f0;line-height:1.7}
+        .container{max-width:1600px;margin:0 auto;padding:40px 20px}
+        header{margin-bottom:40px}
+        .badge{display:inline-block;padding:6px 16px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.5px;margin-bottom:16px;text-transform:uppercase}
+        .badge-confidencial{background:#7c2d12;color:#fed7aa}
+        .badge-section{background:#1e3a5f;color:#93c5fd;margin-bottom:8px}
+        h1{font-size:36px;font-weight:700;margin-bottom:8px;color:#f1f5f9}
+        .subtitle{font-size:14px;color:#94a3b8;font-weight:500}
+        h2{font-size:24px;font-weight:700;color:#f1f5f9;margin-bottom:8px}
+        h3{font-size:18px;font-weight:600;color:#e2e8f0;margin-bottom:12px}
+
+        /* KPI Cards */
+        .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:40px}
+        .kpi-card{background:#111827;border:1px solid #1e293b;border-radius:12px;padding:24px;transition:all .3s ease}
+        .kpi-card:hover{border-color:#3b82f6;transform:translateY(-2px)}
+        .kpi-label{font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:8px}
+        .kpi-value{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:#f1f5f9}
+        .kpi-detail{font-size:12px;color:#64748b;margin-top:6px}
+        .kpi-card.highlight{border-left:3px solid #3b82f6}
+        .kpi-card.green{border-left:3px solid #22c55e}
+        .kpi-card.amber{border-left:3px solid #f59e0b}
+        .kpi-card.purple{border-left:3px solid #a855f7}
+
+        /* Sections */
+        .section{background:#111827;border:1px solid #1e293b;border-radius:12px;padding:32px;margin-bottom:32px}
+        .section-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+        .section-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+        .icon-blue{background:rgba(59,130,246,.15);color:#60a5fa}
+        .icon-green{background:rgba(34,197,94,.15);color:#4ade80}
+        .icon-amber{background:rgba(245,158,11,.15);color:#fbbf24}
+        .icon-purple{background:rgba(168,85,247,.15);color:#c084fc}
+        .icon-red{background:rgba(239,68,68,.15);color:#f87171}
+
+        /* Narrative */
+        .narrative{font-size:15px;color:#cbd5e1;line-height:1.8;margin-bottom:20px}
+        .narrative strong{color:#f1f5f9}
+        .highlight-box{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:20px;margin:16px 0}
+        .highlight-box.green{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.2)}
+        .highlight-box.amber{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2)}
+
+        /* Funnel */
+        .funnel-container{display:flex;flex-direction:column;align-items:center;gap:4px;margin:30px 0}
+        .funnel-step{display:flex;align-items:center;justify-content:center;text-align:center;color:#f1f5f9;font-weight:600;font-size:14px;border-radius:6px;padding:18px;transition:all .3s ease;position:relative}
+        .funnel-step:hover{filter:brightness(1.2)}
+        .funnel-step .step-label{font-size:11px;color:rgba(255,255,255,.7);display:block;font-weight:400;margin-top:4px}
+        .funnel-arrow{color:#475569;font-size:18px}
+
+        /* Chart containers */
+        .chart-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(480px,1fr));gap:24px;margin-bottom:32px}
+        .chart-box{background:#111827;border:1px solid #1e293b;border-radius:12px;padding:24px}
+        .chart-title{font-size:14px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px}
+
+        /* Strategy cards */
+        .strategy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;margin-top:20px}
+        .strategy-card{background:rgba(30,41,59,.5);border:1px solid #334155;border-radius:10px;padding:24px;transition:all .3s ease}
+        .strategy-card:hover{border-color:#60a5fa}
+        .strategy-card h4{font-size:15px;font-weight:600;color:#f1f5f9;margin-bottom:10px}
+        .strategy-card p{font-size:13px;color:#94a3b8;line-height:1.7}
+
+        /* Timeline */
+        .timeline{position:relative;padding-left:30px;margin:20px 0}
+        .timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:#1e293b}
+        .timeline-item{position:relative;margin-bottom:24px}
+        .timeline-item::before{content:'';position:absolute;left:-24px;top:6px;width:10px;height:10px;border-radius:50%;background:#3b82f6;border:2px solid #0a0e1a}
+        .timeline-item.active::before{background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.4)}
+        .timeline-label{font-size:12px;color:#60a5fa;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+        .timeline-content{font-size:14px;color:#cbd5e1;margin-top:4px}
+        .timeline-duration{font-size:11px;color:#64748b;margin-top:2px;font-family:'JetBrains Mono',monospace}
+
+        /* Table */
+        table{width:100%;border-collapse:collapse;margin-top:16px}
+        th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;text-align:left;padding:12px 16px;border-bottom:1px solid #1e293b;font-weight:600}
+        td{padding:12px 16px;border-bottom:1px solid rgba(30,41,59,.5);font-size:13px;color:#cbd5e1}
+        tr:hover td{background:rgba(59,130,246,.04)}
+        .mono{font-family:'JetBrains Mono',monospace;font-size:12px}
+
+        /* Pills */
+        .pill{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
+        .pill-blue{background:rgba(59,130,246,.15);color:#93c5fd}
+        .pill-green{background:rgba(34,197,94,.15);color:#86efac}
+        .pill-amber{background:rgba(245,158,11,.15);color:#fde68a}
+
+        /* Footer */
+        .footer{text-align:center;color:#475569;font-size:12px;margin-top:60px;padding-top:20px;border-top:1px solid #1e293b}
+        
+        @media(max-width:768px){
+            h1{font-size:26px}
+            .kpi-row{grid-template-columns:1fr 1fr}
+            .chart-row{grid-template-columns:1fr}
+            .strategy-grid{grid-template-columns:1fr}
+        }
+    </style>
+</head>
+<body>
+<!-- Botão Voltar ao Menu -->
+<a href="index.html" style="position:fixed;top:16px;right:16px;z-index:99999;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(15,23,42,0.85);color:#fff;font-family:DM Sans,system-ui,sans-serif;font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.3);" onmouseover="this.style.background='rgba(220,38,38,0.9)'" onmouseout="this.style.background='rgba(15,23,42,0.85)'">Menu</a>
+<div class="container">
+
+    <!-- Header -->
+    <header>
+        <span class="badge badge-confidencial">Confidencial — Due Diligence</span>
+        <h1>Estratégia Comercial, Funil & Conversão</h1>
+        <p class="subtitle">Zukkin Brasil — B2B SaaS · Pricing Intelligence para Varejo · Dados de 2026</p>
+    </header>
+
+    <!-- KPI Cards -->
+    <div class="kpi-row">
+        <div class="kpi-card highlight">
+            <div class="kpi-label">Clientes Ativos</div>
+            <div class="kpi-value">68</div>
+            <div class="kpi-detail">Base em Abr/2026 · 68 clientes ativos</div>
+        </div>
+        <div class="kpi-card green">
+            <div class="kpi-label">Net Revenue Retention</div>
+            <div class="kpi-value">105,4%</div>
+            <div class="kpi-detail">Expansão líquida Jan→Mar 2026</div>
+        </div>
+        <div class="kpi-card amber">
+            <div class="kpi-label">Cross-sell Penetração</div>
+            <div class="kpi-value">71,6%</div>
+            <div class="kpi-detail">48 de 68 clientes com 2+ produtos</div>
+        </div>
+        <div class="kpi-card purple">
+            <div class="kpi-label">Ticket Médio Mensal</div>
+            <div class="kpi-value">R$ 22,5K</div>
+            <div class="kpi-detail">MRR Abr R$ 1,51M ÷ 68 ativos</div>
+        </div>
+        <div class="kpi-card highlight">
+            <div class="kpi-label">Top 13 = 50% Receita</div>
+            <div class="kpi-value">19,1%</div>
+            <div class="kpi-detail">13 de 68 clientes · Concentração moderada</div>
+        </div>
+        <div class="kpi-card green">
+            <div class="kpi-label">ARR Projetado 2026</div>
+            <div class="kpi-value">R$ 18M</div>
+            <div class="kpi-detail">CAGR 5 anos: ~22% ao ano</div>
+        </div>
+    </div>
+
+    <!-- 1. MODELO DE NEGÓCIO -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon icon-blue">📐</div>
+            <div>
+                <span class="badge badge-section">Seção 1</span>
+                <h2>Modelo de Negócio & Posicionamento</h2>
+            </div>
+        </div>
+        <p class="narrative">
+            A Zukkin opera no modelo <strong>B2B SaaS enterprise</strong>, fornecendo inteligência de preços para redes varejistas de médio e grande porte no Brasil. Fundada em 2013, a empresa construiu ao longo de mais de 10 anos uma plataforma verticalizada que combina <strong>coleta automatizada de preços</strong> (via robôs web e pesquisa de campo), <strong>analytics avançado</strong> e <strong>ferramentas de precificação</strong> — um stack completo que cobre todo o ciclo de pricing do varejista.
+        </p>
+        <p class="narrative">
+            O posicionamento é claro: ser o <strong>parceiro estratégico de pricing</strong> do varejo brasileiro, não apenas um fornecedor de dados. A receita é 100% recorrente (contratos anuais com renovação automática), com ticket médio de R$ 22,5K/mês — típico de vendas enterprise com alto valor percebido e baixa sensibilidade a preço.
+        </p>
+        <div class="highlight-box">
+            <strong>Diferencial competitivo:</strong> A Zukkin é a única plataforma brasileira que combina coleta proprietária (ZRobot + rede de pesquisadores de campo via ZGO) com analytics e pricing em uma solução integrada. Concorrentes oferecem dados OU ferramentas — a Zukkin entrega ambos.
+        </div>
+    </div>
+
+    <!-- 2. PORTFÓLIO DE PRODUTOS -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon icon-purple">🧩</div>
+            <div>
+                <span class="badge badge-section">Seção 2</span>
+                <h2>Portfólio de Produtos & Mix de Receita</h2>
+            </div>
+        </div>
+        <p class="narrative">
+            A estratégia de produto segue o modelo <strong>"land and expand"</strong>: o cliente entra por um módulo (tipicamente Analytics ou Pricing) e, à medida que percebe valor, expande para módulos complementares. Hoje, <strong>70,6% da base</strong> já utiliza 2 ou mais produtos — evidência clara de sucesso nessa estratégia.
+        </p>
+        <div class="chart-row">
+            <div class="chart-box">
+                <div class="chart-title">Mix de Receita por Produto — 2026</div>
+                <canvas id="chartProductMix" height="280"></canvas>
+            </div>
+            <div class="chart-box">
+                <div class="chart-title">Penetração Cross-sell por Nº de Produtos</div>
+                <canvas id="chartCrossSell" height="280"></canvas>
+            </div>
+        </div>
+        <table>
+            <thead>
+                <tr><th>Produto</th><th>Proposta de Valor</th><th>Receita Anual</th><th>% Total</th><th>Clientes</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Zukkin Analytics</strong></td>
+                    <td>Dashboards de inteligência competitiva, análise de sortimento e share de gôndola</td>
+                    <td class="mono">R$ 7.619.148</td>
+                    <td class="mono">46,6%</td>
+                    <td><span class="pill pill-blue">61 clientes</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Zukkin Pricing</strong></td>
+                    <td>Motor de precificação com regras, alertas e sugestão automatizada de preços</td>
+                    <td class="mono">R$ 7.075.004</td>
+                    <td class="mono">43,3%</td>
+                    <td><span class="pill pill-blue">49 clientes</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Z.Robot</strong></td>
+                    <td>Coleta automatizada de preços em e-commerce via web scraping proprietário</td>
+                    <td class="mono">R$ 1.032.034</td>
+                    <td class="mono">6,3%</td>
+                    <td><span class="pill pill-green">18 clientes</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Zukkin ZGO</strong></td>
+                    <td>App de pesquisa de campo — coleta in-store com georeferenciamento e validação de qualidade</td>
+                    <td class="mono">R$ 493.690</td>
+                    <td class="mono">3,0%</td>
+                    <td><span class="pill pill-green">22 clientes</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Z.Promo / Market</strong></td>
+                    <td>Inteligência promocional e marketplace de dados de preço</td>
+                    <td class="mono">R$ 30.776</td>
+                    <td class="mono">0,2%</td>
+                    <td><span class="pill pill-amber">5 clientes</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Serviços (Setup / Consultoria)</strong></td>
+                    <td>Implantação, treinamento e projetos de consultoria de pricing</td>
+                    <td class="mono">R$ 94.090</td>
+                    <td class="mono">0,6%</td>
+                    <td><span class="pill pill-amber">Pontual</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 3. FUNIL DE VENDAS -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon icon-green">🎯</div>
+            <div>
+                <span class="badge badge-section">Seção 3</span>
+                <h2>Funil de Vendas & Ciclo Comercial</h2>
+            </div>
+        </div>
+        <p class="narrative">
+            O ciclo de vendas da Zukkin é tipicamente <strong>enterprise</strong>, com duração média de <strong>3 a 6 meses</strong> entre primeiro contato e assinatura. O processo envolve múltiplos stakeholders (Comercial, Inteligência de Mercado, TI e Diretoria) e inclui etapas de prova de conceito (POC) com dados reais do varejista.
+        </p>
+
+        <!-- Funnel Visual -->
+        <div class="funnel-container">
+            <div class="funnel-step" style="width:90%;background:linear-gradient(135deg,#1e40af,#3b82f6);min-height:60px">
+                <div>Prospecção & Geração de Leads<span class="step-label">Indicações, eventos do setor (APAS, ABF), inbound, LinkedIn</span></div>
+            </div>
+            <div class="funnel-arrow">▼</div>
+            <div class="funnel-step" style="width:76%;background:linear-gradient(135deg,#1d4ed8,#60a5fa);min-height:60px">
+                <div>Qualificação & Discovery<span class="step-label">Entendimento do cenário de pricing, tamanho de sortimento e maturidade analítica</span></div>
+            </div>
+            <div class="funnel-arrow">▼</div>
+            <div class="funnel-step" style="width:62%;background:linear-gradient(135deg,#7c3aed,#a78bfa);min-height:60px">
+                <div>Demonstração & POC<span class="step-label">Demo personalizada com dados reais do varejo · Duração: 30-60 dias</span></div>
+            </div>
+            <div class="funnel-arrow">▼</div>
+            <div class="funnel-step" style="width:48%;background:linear-gradient(135deg,#059669,#34d399);min-height:60px">
+                <div>Proposta & Negociação<span class="step-label">Proposta modular · Precificação por sortimento/lojas/módulo</span></div>
+            </div>
+            <div class="funnel-arrow">▼</div>
+            <div class="funnel-step" style="width:36%;background:linear-gradient(135deg,#d97706,#fbbf24);color:#1a1a1a;min-height:60px">
+                <div>Fechamento & Onboarding<span class="step-label">Contrato anual · Setup: 30-45 dias · CS dedicado</span></div>
+            </div>
+        </div>
+
+        <!-- Sales Cycle Timeline -->
+        <h3 style="margin-top:30px">Ciclo de Venda Típico</h3>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-label">Semana 1-2</div>
+                <div class="timeline-content">Primeiro contato e reunião de discovery — mapeamento das dores de pricing</div>
+                <div class="timeline-duration">~14 dias</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-label">Semana 3-4</div>
+                <div class="timeline-content">Demo personalizada para time de Inteligência de Mercado e Comercial</div>
+                <div class="timeline-duration">~14 dias</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-label">Semana 5-12</div>
+                <div class="timeline-content">POC (prova de conceito) com dados reais — validação de valor com métricas do cliente</div>
+                <div class="timeline-duration">30-60 dias</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-label">Semana 13-16</div>
+                <div class="timeline-content">Proposta comercial, negociação com compras/diretoria, aprovação interna</div>
+                <div class="timeline-duration">~30 dias</div>
+            </div>
+            <div class="timeline-item active">
+                <div class="timeline-label">Semana 17-22</div>
+                <div class="timeline-content">Assinatura de contrato + onboarding (setup da plataforma, integração de dados, treinamento)</div>
+                <div class="timeline-duration">30-45 dias</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. CANAIS DE AQUISIÇÃO -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon icon-amber">📡</div>
+            <div>
+                <span class="badge badge-section">Seção 4</span>
+                <h2>Canais de Aquisição & Go-to-Market</h2>
+            </div>
+        </div>
+        <p class="narrative">
+            A aquisição de clientes da Zukkin é predominantemente <strong>relationship-driven e feira setorial</strong>, refletindo a natureza enterprise do negócio. O CAC é excepcionalmente baixo (R$ 24K) em modelo founder-led sales, sem equipe comercial dedicada nem mídia paga, resultando em uma relação LTV/CAC altamente eficiente.
+        </p>
+        <div class="chart-row">
+            <div class="chart-box">
+                <div class="chart-title">Canais de Aquisição (Estimativa por Relevância)</div>
+                <canvas id="chartChannels" height="280"></canvas>
+            </div>
+            <div class="chart-box">
+                <div class="chart-title">Evolução Receita Anual (R$ milhões)</div>
+                <canvas id="chartRevolution" height="280"></canvas>
+            </div>
+        </div>
+        <div class="strategy-grid">
+            <div class="strategy-card">
+                <h4>🤝 Indicações & Network (50%)</h4>
+                <p>Principal canal. O varejo brasileiro é um mercado concentrado e relacional. Clientes satisfeitos indicam a Zukkin para pares do setor. A reputação construída em 10+ anos com redes como Cliente 01, Cliente 06, Cliente 03 e Cliente 04 gera um pipeline orgânico de alta qualidade e custo zero.</p>
+            </div>
+            <div class="strategy-card">
+                <h4>🎤 Feiras Setoriais (30%)</h4>
+                <p>Presença ativa em feiras como ABRAS e APAS Show (maiores eventos supermercadistas da América Latina). Investimento anual de ~R$ 180K que gera leads qualificados com alto potencial de conversão. Combina geração de pipeline com reforço de marca e thought leadership.</p>
+            </div>
+            <div class="strategy-card">
+                <h4>📧 Prospecção Direta — Founder-led (15%)</h4>
+                <p>Modelo de venda conduzido pelo fundador, com abordagem consultiva e profundo conhecimento do setor. Prospecção ativa em redes varejistas fora da base, com foco em regiões e segmentos subpenetrados (atacarejo, farmácias, home centers). Alto potencial de escala com estruturação de equipe comercial.</p>
+            </div>
+            <div class="strategy-card">
+                <h4>🔍 Inbound & Conteúdo (5%)</h4>
+                <p>Site institucional e presença digital em crescimento. Canal complementar com oportunidade significativa de expansão — atualmente sem investimento em mídia paga ou estratégia de conteúdo estruturada. LinkedIn como principal canal digital B2B.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. RETENÇÃO & EXPANSÃO -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon icon-green">🔄</div>
+            <div>
+                <span class="badge badge-section">Seção 5</span>
+                <h2>Retenção, Expansão & Unit Economics</h2>
+            </div>
+        </div>
+        <p class="narrative">
+            A Zukkin apresenta métricas de retenção excepcionais para o padrão SaaS B2B brasileiro. O <strong>Net Revenue Retention de 105,4%</strong> (Jan→Mar 2026) demonstra que a base existente não apenas se mantém, mas expande naturalmente — o crescimento orgânico dentro da base supera a perda por churn.
+        </p>
+        <div class="chart-row">
+            <div class="chart-box">
+                <div class="chart-title">Evolução MRR Mensal 2026</div>
+                <canvas id="chartMRR" height="260"></canvas>
+            </div>
+            <div class="chart-box">
+                <div class="chart-title">Concentração de Receita — Curva de Pareto</div>
+                <canvas id="chartPareto" height="260"></canvas>
+            </div>
+        </div>
+
+        <div class="highlight-box green">
+            <h3 style="color:#86efac;margin-bottom:12px">Motores de Expansão de Receita</h3>
+            <p class="narrative" style="margin-bottom:0">
+                <strong>1. Cross-sell de módulos:</strong> Clientes que entram com Analytics expandem para Pricing (e vice-versa). A maioria dos clientes já usa 2+ módulos. Clientes com apenas 1 produto representam oportunidade imediata de upsell.<br><br>
+                <strong>2. Aumento de sortimento:</strong> Precificação é proporcional ao número de SKUs monitorados. À medida que o cliente amadurece, amplia categorias cobertas.<br><br>
+                <strong>3. Expansão de lojas/bandeiras:</strong> Grupos varejistas multi-bandeira tipicamente iniciam com uma bandeira piloto e expandem para outras.<br><br>
+                <strong>4. Novos módulos:</strong> Z.Robot (coleta digital) e Z.Promo (inteligência promocional) são add-ons recentes com penetração ainda baixa — forte potencial de expansão.
+            </p>
+        </div>
+
+        <h3 style="margin-top:24px">Unit Economics</h3>
+        <table>
+            <thead><tr><th>Métrica</th><th>Valor</th><th>Benchmark SaaS B2B</th><th>Avaliação</th></tr></thead>
+            <tbody>
+                <tr><td>CAC</td><td class="mono">R$ 24K</td><td class="mono">—</td><td><span class="pill pill-green">Founder-led sales</span></td></tr>
+                <tr><td>Ticket Médio Mensal</td><td class="mono">R$ 22.500</td><td class="mono">—</td><td><span class="pill pill-blue">Enterprise</span></td></tr>
+                <tr><td>LTV (estimado)</td><td class="mono">~R$ 731K</td><td class="mono">—</td><td><span class="pill pill-green">Alto</span></td></tr>
+                <tr><td>LTV / CAC</td><td class="mono">~30x</td><td class="mono">&gt; 3x</td><td><span class="pill pill-green">Excelente</span></td></tr>
+                <tr><td>NRR (Net Revenue Retention)</td><td class="mono">~105%</td><td class="mono">&gt; 100%</td><td><span class="pill pill-green">Expansão líquida</span></td></tr>
+                <tr><td>Payback Period</td><td class="mono">~1 mês</td><td class="mono">&lt; 18 meses</td><td><span class="pill pill-green">Excelente</span></td></tr>
+                <tr><td>Concentração Top 1</td><td class="mono">10,5%</td><td class="mono">&lt; 15%</td><td><span class="pill pill-green">Saudável</span></td></tr>
+                <tr><td>Concentração Top 13 (50%)</td><td class="mono">19,1%</td><td class="mono">—</td><td><span class="pill pill-blue">Moderada</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 6. PERFIL DE CLIENTES -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon icon-blue">🏢</div>
+            <div>
+                <span class="badge badge-section">Seção 6</span>
+                <h2>Perfil de Clientes & Segmentação</h2>
+            </div>
+        </div>
+        <p class="narrative">
+            A base de 68 clientes é composta por <strong>grandes e médias redes varejistas</strong> em todo o Brasil, com forte presença nos segmentos de supermercados, atacarejo, farmácias e varejo especializado. O portfólio inclui nomes emblemáticos do varejo nacional.
+        </p>
+        <div class="chart-row">
+            <div class="chart-box">
+                <div class="chart-title">Top 10 Clientes por Receita Anual 2026</div>
+                <canvas id="chartTop10" height="300"></canvas>
+            </div>
+            <div class="chart-box">
+                <div class="chart-title">Segmentação por Número de Produtos Contratados</div>
+                <canvas id="chartSegmentation" height="300"></canvas>
+            </div>
+        </div>
+        <div class="highlight-box amber">
+            <h3 style="color:#fde68a;margin-bottom:12px">Segmentos Atendidos</h3>
+            <p class="narrative" style="margin-bottom:0">
+                <strong>Supermercados & Hipermercados:</strong> Cliente 01, Cliente 06, Cliente 07, Cliente 08, Cliente 10, Cliente 11, Cliente 15, Cliente 13, Cliente 12 — core do negócio.<br><br>
+                <strong>Atacarejo:</strong> Cliente 02, Cliente 05 (Cliente 05) — segmento em forte crescimento no Brasil.<br><br>
+                <strong>Farmácias:</strong> Cliente 03, Cliente 14 — vertical com alto potencial de expansão para outras redes.<br><br>
+                <strong>Varejo Especializado:</strong> Cliente 04 (carnes premium), Cliente 09 (telecom) — demonstra versatilidade da plataforma além do food retail.<br><br>
+                <strong>Cobertura geográfica:</strong> Clientes em todas as regiões do Brasil — Sul, Sudeste, Nordeste, Centro-Oeste e Norte.
+            </p>
+        </div>
+    </div>
+
+    <!-- 7. ESTRATÉGIA DE CRESCIMENTO -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon icon-red">🚀</div>
+            <div>
+                <span class="badge badge-section">Seção 7</span>
+                <h2>Estratégia de Crescimento & Oportunidades</h2>
+            </div>
+        </div>
+        <p class="narrative">
+            A Zukkin cresceu de R$ 6,5M (2021) para R$ 18M de ARR projetado (2026) — um <strong>CAGR de ~22%</strong> — com crescimento rentável (margem EBITDA de ~18%). A estratégia para os próximos anos combina aprofundamento na base atual com expansão de mercado endereçável.
+        </p>
+        <div class="strategy-grid">
+            <div class="strategy-card">
+                <h4>📈 Expansão na Base Existente</h4>
+                <p>Clientes com apenas 1 produto representam oportunidade imediata de cross-sell. Se 50% adicionarem um segundo módulo no ticket médio, são +R$ 2,7M de ARR incremental. Z.Robot (18 clientes) e ZGO (22 clientes) têm alta alavanca de penetração.</p>
+            </div>
+            <div class="strategy-card">
+                <h4>🏪 Novos Verticais</h4>
+                <p>O sucesso com farmácias (Cliente 03, Cliente 14) e telecom (Cliente 09) valida a expansão para verticais adjacentes: home centers, pet shops, materiais de construção e cosméticos. Mesmo TAM dentro do food retail ainda é grande — as 300 maiores redes do Brasil são o universo endereçável.</p>
+            </div>
+            <div class="strategy-card">
+                <h4>🤖 Produto — IA & Automação</h4>
+                <p>Evolução do motor de pricing com modelos de IA generativa para sugestão automática de preços. O Z.Robot em expansão para cobrir mais e-commerces e marketplaces. Cada avanço em automação reduz custo de entrega e aumenta margem.</p>
+            </div>
+            <div class="strategy-card">
+                <h4>🌎 Expansão Regional</h4>
+                <p>Forte presença no Sudeste e Nordeste, com oportunidades de densificação no Sul, Centro-Oeste e Norte. O modelo SaaS permite escalar sem presença física — o onboarding pode ser remoto.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Zukkin Brasil — Estratégia Comercial & Funil de Vendas · Documento confidencial preparado para due diligence · Abril 2026</p>
+    </div>
+
+</div>
+
+<script>
+// Chart.js defaults
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#1e293b';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+
+const blue = '#3b82f6', green = '#22c55e', amber = '#f59e0b', purple = '#a855f7', red = '#ef4444', cyan = '#06b6d4';
+
+// 1. Product Mix Doughnut
+new Chart(document.getElementById('chartProductMix'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Analytics + Pesquisas', 'Pricing', 'Z.Robot', 'ZGO', 'Outros'],
+        datasets: [{
+            data: [46.6, 43.3, 6.3, 3.0, 0.8],
+            backgroundColor: [blue, purple, green, amber, '#475569'],
+            borderColor: '#111827',
+            borderWidth: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, font: { size: 12 } } },
+            tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed}%` } }
+        },
+        cutout: '55%'
+    }
+});
+
+// 2. Cross-sell Bar
+new Chart(document.getElementById('chartCrossSell'), {
+    type: 'bar',
+    data: {
+        labels: ['1 Produto', '2 Produtos', '3 Produtos', '4 Produtos'],
+        datasets: [{
+            label: 'Nº de Clientes',
+            data: [20, 28, 14, 6],
+            backgroundColor: ['#475569', blue, purple, green],
+            borderRadius: 6,
+            barThickness: 48
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { stepSize: 5 } },
+            x: { grid: { display: false } }
+        }
+    }
+});
+
+// 3. Channels Horizontal Bar
+new Chart(document.getElementById('chartChannels'), {
+    type: 'bar',
+    data: {
+        labels: ['Indicações & Network', 'Eventos do Setor', 'Outbound Direto', 'Inbound & Conteúdo'],
+        datasets: [{
+            label: 'Relevância estimada (%)',
+            data: [40, 25, 20, 15],
+            backgroundColor: [green, blue, amber, purple],
+            borderRadius: 6,
+            barThickness: 32
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.parsed.x}% dos novos clientes` } } },
+        scales: {
+            x: { beginAtZero: true, max: 50, grid: { color: '#1e293b' }, ticks: { callback: v => v + '%' } },
+            y: { grid: { display: false } }
+        }
+    }
+});
+
+// 4. Revenue Evolution
+new Chart(document.getElementById('chartRevolution'), {
+    type: 'bar',
+    data: {
+        labels: ['2021', '2022', '2023', '2024', '2025', '2026P'],
+        datasets: [{
+            label: 'Receita Bruta (R$ M)',
+            data: [6.55, 10.04, 12.00, 14.19, 16.07, 18.00],
+            backgroundColor: ctx => ctx.dataIndex === 5 ? 'rgba(59,130,246,0.4)' : blue,
+            borderColor: ctx => ctx.dataIndex === 5 ? blue : 'transparent',
+            borderWidth: ctx => ctx.dataIndex === 5 ? 2 : 0,
+            borderDash: ctx => ctx.dataIndex === 5 ? [4, 4] : [],
+            borderRadius: 6,
+            barThickness: 40
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `R$ ${ctx.parsed.y.toFixed(2)}M` } } },
+        scales: {
+            y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { callback: v => `R$ ${v}M` } },
+            x: { grid: { display: false } }
+        }
+    }
+});
+
+// 5. MRR Monthly
+const mrrData = [1274735, 1273428, 1514514, 1416763, 1353251, 1361587, 1356291, 1353928, 1356635, 1358452, 1361583, 1363576];
+new Chart(document.getElementById('chartMRR'), {
+    type: 'line',
+    data: {
+        labels: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+        datasets: [{
+            label: 'MRR',
+            data: mrrData,
+            borderColor: blue,
+            backgroundColor: 'rgba(59,130,246,0.1)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 4,
+            pointBackgroundColor: blue,
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `R$ ${(ctx.parsed.y/1000).toFixed(0)}K` } } },
+        scales: {
+            y: { grid: { color: '#1e293b' }, ticks: { callback: v => `${(v/1e6).toFixed(2)}M` } },
+            x: { grid: { display: false } }
+        }
+    }
+});
+
+// 6. Pareto Curve
+(function(){
+    const clientTotals = [1723856, 986595, 757547, 696343, 675731, 641750, 503007, 487300, 471692, 407316,
+        375723, 358926, 345578, 317460, 312562, 298020, 291216, 286614, 281508, 272304,
+        268572, 258786, 249936, 233808, 222000, 210732, 201420, 198504, 194388, 186600,
+        181044, 177480, 168636, 163980, 159288, 149784, 145452, 140772, 132168, 128724,
+        124392, 119748, 116040, 111816, 107472, 102468, 98460, 94812, 91608, 87960,
+        84264, 80616, 77412, 74388, 71316, 68244, 65520, 62400, 59124, 55260,
+        50832, 46080, 41076, 36000, 30780, 24336, 16560, 6770];
+    const total = clientTotals.reduce((a,b)=>a+b,0);
+    let cumul = 0;
+    const cumulPct = clientTotals.map(v => { cumul += v; return (cumul/total*100).toFixed(1); });
+    const labels = Array.from({length:clientTotals.length}, (_,i) => i+1);
+
+    new Chart(document.getElementById('chartPareto'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '% Acumulada da Receita',
+                data: cumulPct,
+                borderColor: amber,
+                backgroundColor: 'rgba(245,158,11,0.08)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 0,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: { callbacks: { title: ctx => `Cliente #${ctx[0].label}`, label: ctx => `${ctx.parsed.y}% da receita` } },
+                annotation: undefined
+            },
+            scales: {
+                y: { min: 0, max: 100, grid: { color: '#1e293b' }, ticks: { callback: v => v + '%' } },
+                x: { grid: { display: false }, title: { display: true, text: 'Clientes (ordenados por receita)', color: '#64748b' } }
+            }
+        }
+    });
+})();
+
+// 7. Top 10 Clients
+new Chart(document.getElementById('chartTop10'), {
+    type: 'bar',
+    data: {
+        labels: ['Cliente 01','Cliente 02','Cliente 03','Cliente 04','Cliente 05','Cliente 06','Cliente 07','Cliente 08','Cliente 09','Cliente 10'],
+        datasets: [{
+            label: 'Receita Anual (R$)',
+            data: [1723856, 986595, 757547, 696343, 675731, 641750, 503007, 487300, 471692, 407316],
+            backgroundColor: [blue, blue, blue, purple, purple, purple, green, green, green, amber],
+            borderRadius: 6,
+            barThickness: 24
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `R$ ${(ctx.parsed.x/1000).toFixed(0)}K` } } },
+        scales: {
+            x: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { callback: v => `R$ ${(v/1e6).toFixed(1)}M` } },
+            y: { grid: { display: false } }
+        }
+    }
+});
+
+// 8. Segmentation Pie
+new Chart(document.getElementById('chartSegmentation'), {
+    type: 'polarArea',
+    data: {
+        labels: ['1 Produto (20)', '2 Produtos (28)', '3 Produtos (14)', '4 Produtos (6)'],
+        datasets: [{
+            data: [20, 28, 14, 6],
+            backgroundColor: ['rgba(71,85,105,0.6)', 'rgba(59,130,246,0.6)', 'rgba(168,85,247,0.6)', 'rgba(34,197,94,0.6)'],
+            borderColor: '#111827',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, font: { size: 12 } } } },
+        scales: { r: { grid: { color: '#1e293b' }, ticks: { display: false } } }
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard NPS — 2026 | Zukkin</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232733;--border:#2e3345;--text:#e4e6ef;--text-dim:#8b8fa3;--green:#00b894;--green-bg:rgba(0,184,148,.12);--blue:#74b9ff;--blue-bg:rgba(116,185,255,.12);--orange:#fdcb6e;--orange-bg:rgba(253,203,110,.12);--red:#ff6b6b;--red-bg:rgba(255,107,107,.12);--purple:#a29bfe;--purple-bg:rgba(162,155,254,.12);--accent:#6c5ce7;--radius:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',-apple-system,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:linear-gradient(135deg,#1a1d27,#232733);border-bottom:1px solid var(--border);padding:28px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.header-left{display:flex;align-items:center;gap:16px}
+.logo{width:48px;height:48px;background:linear-gradient(135deg,#00b894,#55efc4);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:#1a1d27}
+.header-title{font-size:22px;font-weight:700}
+.header-sub{font-size:13px;color:var(--text-dim);margin-top:4px}
+.badge-closed{background:var(--green-bg);color:var(--green);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.main{max-width:1200px;margin:0 auto;padding:32px 40px}
+.section{margin-bottom:40px}
+.section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-dim);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;transition:transform .2s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi.highlight{border-color:var(--green);box-shadow:0 0 0 1px var(--green)}
+.kpi-icon{font-size:24px;margin-bottom:6px}
+.kpi-value{font-size:36px;font-weight:800;line-height:1;margin-bottom:4px}
+.kpi-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim)}
+.kpi-sub{font-size:11px;color:var(--text-dim);margin-top:4px}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.chart-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.chart-sub{font-size:12px;color:var(--text-dim);margin-bottom:16px}
+.legend-row{display:flex;gap:20px;margin-top:16px;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:13px}
+.legend-dot{width:12px;height:12px;border-radius:3px}
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+.product-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.product-card.blue{border-color:rgba(116,185,255,.3)}
+.product-card.purple{border-color:rgba(162,155,254,.3)}
+.product-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.product-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);font-weight:600}
+.product-name{font-size:20px;font-weight:700;margin-top:4px}
+.product-nps{font-size:42px;font-weight:800}
+.product-nps.blue{color:var(--blue)}
+.product-nps.purple{color:var(--purple)}
+.product-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.pstat{background:var(--surface2);border-radius:8px;padding:12px;text-align:center}
+.pstat-val{font-size:20px;font-weight:700}
+.pstat-lbl{font-size:11px;color:var(--text-dim);margin-top:2px}
+.week-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-bottom:32px}
+.week-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center}
+.week-label{font-size:12px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.week-dates{font-size:11px;color:var(--text-dim);margin-bottom:12px}
+.week-nps{font-size:32px;font-weight:800;margin-bottom:4px}
+.week-resps{font-size:12px;color:var(--text-dim)}
+.week-card.best{border-color:var(--green)}
+.trend-arrow{font-size:14px;vertical-align:super}
+table{width:100%;border-collapse:collapse}
+thead th{padding:12px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim);background:var(--surface2);border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+tbody td{padding:12px 16px;font-size:13px}
+.nps-bar{height:6px;background:var(--border);border-radius:3px;margin-top:4px;min-width:60px}
+.nps-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+.badge-orange{background:var(--orange-bg);color:var(--orange)}
+.collapsed-row td{padding:16px;color:var(--text-dim);font-size:13px}
+.detrator-card{background:var(--surface);border-left:4px solid var(--red);border-radius:0 var(--radius) var(--radius) 0;padding:20px 24px;margin-bottom:16px}
+.detrator-card.warn{border-left-color:var(--orange)}
+.detrator-card.ok{border-left-color:var(--green)}
+.detrator-top{display:flex;gap:24px;align-items:center;justify-content:space-between}
+.detrator-info h4{font-size:15px;font-weight:700;margin-bottom:4px}
+.detrator-info p{font-size:13px;color:var(--text-dim)}
+.nota-badge{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0}
+.nota-1,.nota-2,.nota-3,.nota-4{background:rgba(255,107,107,.15);color:var(--red)}
+.nota-5{background:rgba(253,203,110,.15);color:var(--orange)}
+.nota-6{background:rgba(253,203,110,.10);color:var(--orange)}
+.footer{text-align:center;padding:24px;color:var(--text-dim);font-size:12px;border-top:1px solid var(--border);margin-top:20px}
+.highlights-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.highlight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.highlight-card.green{border-color:rgba(0,184,148,.3)}
+.highlight-card.orange{border-color:rgba(253,203,110,.3)}
+.highlight-title{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.highlight-item{font-size:13px;margin-bottom:10px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.priority-tag{font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-align:middle}
+.delta.up{background:var(--green-bg);color:var(--green)}
+.delta.down{background:var(--red-bg);color:var(--red)}
+.delta.neutral{background:var(--orange-bg);color:var(--orange)}
+.delta.first{background:var(--blue-bg);color:var(--blue)}
+.delta.info{background:var(--purple-bg);color:var(--purple)}
+.month-selector{display:flex;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.month-btn{padding:10px 24px;font-size:14px;font-weight:600;color:var(--text-dim);background:transparent;border:none;cursor:pointer;transition:all .2s;position:relative}
+.month-btn:hover{color:var(--text);background:var(--surface2)}
+.month-btn.active{color:#1a1d27;background:linear-gradient(135deg,#00b894,#55efc4)}
+.month-btn.active:hover{background:linear-gradient(135deg,#00b894,#55efc4)}
+.month-btn.year-btn.active{background:linear-gradient(135deg,#6c5ce7,#a29bfe)}
+.month-view{display:none}
+.month-view.active{display:block}
+.auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center}
+.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:380px;text-align:center}
+.auth-box h2{margin:16px 0 4px}
+.auth-box p{color:var(--text-dim);font-size:13px;margin-bottom:24px}
+.auth-input{width:100%;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;outline:none;margin-bottom:16px}
+.auth-btn{width:100%;padding:12px;background:linear-gradient(135deg,#00b894,#55efc4);color:#1a1d27;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}
+.auth-error{color:var(--red);font-size:13px;margin-top:8px;min-height:20px}
+.evo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.evo-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center}
+.evo-card.best{border-color:var(--green)}
+.evo-month{font-size:12px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.evo-nps{font-size:36px;font-weight:800;margin-bottom:4px}
+.evo-detail{font-size:12px;color:var(--text-dim)}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.charts-row,.product-grid,.highlights-grid{grid-template-columns:1fr}.week-grid,.evo-grid{grid-template-columns:repeat(2,1fr)}.main{padding:20px}.month-selector{flex-wrap:wrap}}
+</style>
+</head><body>
+<!-- Auth removed - Data Room handles encryption via staticrypt -->
+
+<header class="header">
+  <div class="header-left">
+    <div class="logo">Z</div>
+    <div>
+      <div class="header-title" id="headerTitle">Dashboard NPS — 2026</div>
+      <div class="header-sub" id="headerSub">Janeiro a Março 2026 · 263 respostas coletadas · Relatório consolidado</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <div class="month-selector">
+      <button class="month-btn year-btn active" onclick="switchView('ano',this)">2026</button>
+      <button class="month-btn" onclick="switchView('jan',this)">Janeiro</button>
+      <button class="month-btn" onclick="switchView('fev',this)">Fevereiro</button>
+      <button class="month-btn" onclick="switchView('mar',this)">Março</button>
+    </div>
+    <div class="badge-closed">✅ Q1 fechado</div>
+  </div>
+</header>
+
+<script>
+const HEADERS = {
+  ano: {title:'Dashboard NPS — 2026', sub:'Janeiro a Março 2026 · 263 respostas coletadas · Médias do ano'},
+  jan: {title:'Dashboard NPS — Janeiro 2026', sub:'02/01 a 31/01/2026 · 123 respostas coletadas'},
+  fev: {title:'Dashboard NPS — Fevereiro 2026', sub:'01/02 a 28/02/2026 · 67 respostas coletadas'},
+  mar: {title:'Dashboard NPS — Março 2026', sub:'01/03 a 31/03/2026 · 73 respostas coletadas'}
+};
+function switchView(m,btn){
+  document.querySelectorAll('.month-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.month-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+m).classList.add('active');
+  document.getElementById('headerTitle').textContent=HEADERS[m].title;
+  document.getElementById('headerSub').textContent=HEADERS[m].sub;
+  Object.keys(Chart.instances).forEach(k=>Chart.instances[k].destroy());
+  setTimeout(()=>initCharts(m),60);
+}
+</script>
+<div id="view-ano" class="month-view active">
+<div class="main">
+
+<div class="section">
+  <div class="section-title">📊 Resumo Executivo — Acumulado 2026</div>
+  <div class="kpi-grid">
+    <div class="kpi highlight">
+      <div class="kpi-icon">🏆</div>
+      <div class="kpi-value" style="color:var(--green)">+65</div>
+      <div class="kpi-label">NPS Geral</div>
+      <div class="kpi-sub">Média de 3 meses <span class="delta info">📊 Média</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon">📝</div>
+      <div class="kpi-value" style="color:var(--blue)">263</div>
+      <div class="kpi-label">Respostas</div>
+      <div class="kpi-sub">Ø 87,7/mês · 3 meses</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon">⭐</div>
+      <div class="kpi-value" style="color:var(--green)">192</div>
+      <div class="kpi-label">Promotores</div>
+      <div class="kpi-sub">73,0% do total</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon">😐</div>
+      <div class="kpi-value" style="color:var(--orange)">50</div>
+      <div class="kpi-label">Neutros</div>
+      <div class="kpi-sub">19,0% do total</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon">⚠️</div>
+      <div class="kpi-value" style="color:var(--red)">21</div>
+      <div class="kpi-label">Detratores</div>
+      <div class="kpi-sub">8,0% · 11 clientes</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">📈 Distribuição das Notas — Acumulado</div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">Distribuição Geral</div>
+      <div class="chart-sub">Promotores / Neutros / Detratores — Jan–Mar 2026</div>
+      <canvas id="chartRosca-ano" height="260"></canvas>
+      <div class="legend-row">
+        <div class="legend-item"><div class="legend-dot" style="background:#00b894"></div> Promotores 73,0%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fdcb6e"></div> Neutros 19,0%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Detratores 8,0%</div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Histograma de Notas</div>
+      <div class="chart-sub">Todas as respostas acumuladas (0 a 10)</div>
+      <canvas id="chartHist-ano" height="260"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">📦 NPS por Produto — Acumulado</div>
+  <div class="product-grid">
+    <div class="product-card blue">
+      <div class="product-header">
+        <div><div class="product-label">ZUKKIN PRICING</div><div class="product-name">Pricing</div></div>
+        <div style="text-align:right"><div class="product-label">NPS</div><div class="product-nps blue">+60</div></div>
+      </div>
+      <div class="product-stats">
+        <div class="pstat"><div class="pstat-val" style="color:var(--green)">96</div><div class="pstat-lbl">Promotores</div></div>
+        <div class="pstat"><div class="pstat-val" style="color:var(--orange)">24</div><div class="pstat-lbl">Neutros</div></div>
+        <div class="pstat"><div class="pstat-val" style="color:var(--red)">15</div><div class="pstat-lbl">Detratores</div></div>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--text-dim)">135 respostas · Média 8,77 · 15 detratores no ano</div>
+    </div>
+    <div class="product-card purple">
+      <div class="product-header">
+        <div><div class="product-label">ZUKKIN ANALYTICS</div><div class="product-name">Analytics</div></div>
+        <div style="text-align:right"><div class="product-label">NPS</div><div class="product-nps purple">+70</div></div>
+      </div>
+      <div class="product-stats">
+        <div class="pstat"><div class="pstat-val" style="color:var(--green)">96</div><div class="pstat-lbl">Promotores</div></div>
+        <div class="pstat"><div class="pstat-val" style="color:var(--orange)">26</div><div class="pstat-lbl">Neutros</div></div>
+        <div class="pstat"><div class="pstat-val" style="color:var(--red)">6</div><div class="pstat-lbl">Detratores</div></div>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--text-dim)">128 respostas · Média 9,02 · 6 detratores no ano</div>
+    </div>
+  </div>
+  <div class="chart-card"><div class="chart-title">Comparativo por Produto</div><div class="chart-sub">Acumulado — Pricing vs Analytics</div><canvas id="chartProd-ano" height="200"></canvas></div>
+</div>
+
+<div class="section">
+  <div class="section-title">📅 Evolução Mensal — NPS</div>
+  <div class="evo-grid">
+    <div class="evo-card">
+      <div class="evo-month">Janeiro</div>
+      <div class="evo-nps" style="color:var(--blue)">+56</div>
+      <div class="evo-detail">123 respostas · 11 detratores</div>
+    </div>
+    <div class="evo-card best">
+      <div class="evo-month">Fevereiro 🏆</div>
+      <div class="evo-nps" style="color:var(--green)">+81</div>
+      <div class="evo-detail">67 respostas · 3 detratores</div>
+    </div>
+    <div class="evo-card">
+      <div class="evo-month">Março</div>
+      <div class="evo-nps" style="color:var(--green)">+66</div>
+      <div class="evo-detail">73 respostas · 7 detratores</div>
+    </div>
+  </div>
+  <div class="chart-card"><div class="chart-title">Tendência NPS Mensal</div><div class="chart-sub">Evolução do NPS mês a mês — 2026</div><canvas id="chartWeek-ano" height="200"></canvas></div>
+</div>
+<div class="section">
+  <div class="section-title">🏢 NPS por Cliente — Acumulado</div>
+  <div class="chart-card" style="padding:0;overflow:hidden">
+    <div style="padding:24px 24px 0"><div class="chart-title">Ranking de Clientes — Acumulado 2026</div><div class="chart-sub" style="text-align:right">Principais clientes · ordenado por volume acumulado</div></div>
+    <table><thead><tr><th>#</th><th>Cliente</th><th>Respostas</th><th>NPS</th><th>Tendência</th><th>Produtos</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Comercial Zaffari</strong></td><td>29</td><td><span style="color:var(--blue);font-weight:700">+45</span><div class="nps-bar"><div class="nps-bar-fill" style="width:72%;background:var(--blue)"></div></div></td><td><span style="font-size:11px;color:var(--text-dim)">Jan +21 → Fev +75 → Mar +55</span></td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-orange">⚠ 4 detratores</span></td></tr>
+      <tr><td>2</td><td><strong>Cliente 13</strong></td><td>27</td><td><span style="color:var(--green);font-weight:700">+70</span><div class="nps-bar"><div class="nps-bar-fill" style="width:85%;background:var(--green)"></div></div></td><td><span style="font-size:11px;color:var(--text-dim)">Jan +67 → Fev +100 → Mar +50</span></td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-orange">⚠ 2 detratores</span></td></tr>
+      <tr><td>3</td><td><strong>Cliente 05</strong></td><td>21</td><td><span style="color:var(--blue);font-weight:700">+38</span><div class="nps-bar"><div class="nps-bar-fill" style="width:69%;background:var(--blue)"></div></div></td><td><span style="font-size:11px;color:var(--text-dim)">Jan +40 → Fev +80 → Mar +17</span></td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-red">🔴 4 detratores</span></td></tr>
+      <tr><td>4</td><td><strong>Shibata</strong></td><td>13</td><td><span style="color:var(--blue);font-weight:700">+31</span><div class="nps-bar"><div class="nps-bar-fill" style="width:65%;background:var(--blue)"></div></div></td><td><span style="font-size:11px;color:var(--text-dim)">Jan +43 → Fev +50 → Mar 0</span></td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-orange">⚠ 1 detrator</span></td></tr>
+      <tr><td>5</td><td><strong>Tenda</strong></td><td>11</td><td><span style="color:var(--orange);font-weight:700">+18</span><div class="nps-bar"><div class="nps-bar-fill" style="width:59%;background:var(--orange)"></div></div></td><td><span style="font-size:11px;color:var(--text-dim)">Jan −25 → Fev +50 → Mar +33</span></td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-red">🔴 3 detratores</span></td></tr>
+      <tr><td>6</td><td><strong>Cliente 10</strong></td><td>10</td><td><span style="color:var(--green);font-weight:700">+90</span><div class="nps-bar"><div class="nps-bar-fill" style="width:95%;background:var(--green)"></div></div></td><td><span style="font-size:11px;color:var(--text-dim)">Jan +50 → Fev +100 → Mar +100</span></td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">⭐ Excelente</span></td></tr>
+      <tr><td>7</td><td><strong>Zaffari</strong></td><td>10</td><td><span style="color:var(--green);font-weight:700">+70</span><div class="nps-bar"><div class="nps-bar-fill" style="width:85%;background:var(--green)"></div></div></td><td><span style="font-size:11px;color:var(--text-dim)">Jan +50 → Fev +100 → Mar +67</span></td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Bom</span></td></tr>
+      <tr><td>8</td><td><strong>Cliente 28</strong></td><td>10</td><td><span style="color:var(--green);font-weight:700">+90</span><div class="nps-bar"><div class="nps-bar-fill" style="width:95%;background:var(--green)"></div></div></td><td><span style="font-size:11px;color:var(--text-dim)">Jan +71 → Fev +100 → Mar +100</span></td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">⭐ Excelente</span></td></tr>
+      <tr><td>9</td><td><strong>Master</strong></td><td>5+</td><td><span style="color:var(--green);font-weight:700">+80</span><div class="nps-bar"><div class="nps-bar-fill" style="width:90%;background:var(--green)"></div></div></td><td><span style="font-size:11px;color:var(--text-dim)">Mar +80 · 5 respostas</span></td><td><span class="badge badge-blue">Pricing</span></td><td><span class="badge badge-green">✅ Bom</span></td></tr>
+      <tr><td>10</td><td><strong>Cliente 21</strong></td><td>5+</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td><span style="font-size:11px;color:var(--text-dim)">Jan +100 · Fev +100 · Mar +100</span></td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">🏆 Perfeito</span></td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">🚨 Detratores do Ano — Resumo (21 ocorrências)</div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">Por Produto</div>
+      <div class="chart-sub">Onde estão os detratores?</div>
+      <div style="display:flex;gap:16px;margin-top:12px">
+        <div class="pstat" style="flex:1"><div class="pstat-val" style="color:var(--red)">15</div><div class="pstat-lbl">Pricing (71%)</div></div>
+        <div class="pstat" style="flex:1"><div class="pstat-val" style="color:var(--red)">6</div><div class="pstat-lbl">Analytics (29%)</div></div>
+      </div>
+      <div style="margin-top:16px;font-size:12px;color:var(--text-dim)">Pricing concentra a maioria dos detratores em todos os meses.</div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Por Mês</div>
+      <div class="chart-sub">Evolução de detratores</div>
+      <div style="display:flex;gap:12px;margin-top:12px">
+        <div class="pstat" style="flex:1"><div class="pstat-val" style="color:var(--red)">11</div><div class="pstat-lbl">Janeiro</div></div>
+        <div class="pstat" style="flex:1"><div class="pstat-val" style="color:var(--green)">3</div><div class="pstat-lbl">Fevereiro</div></div>
+        <div class="pstat" style="flex:1"><div class="pstat-val" style="color:var(--orange)">7</div><div class="pstat-lbl">Março</div></div>
+      </div>
+      <div style="margin-top:16px;font-size:12px;color:var(--text-dim)">Fev foi o melhor mês; março voltou a subir.</div>
+    </div>
+  </div>
+
+  <div style="margin-top:24px">
+    <div class="chart-title" style="margin-bottom:16px">Clientes Reincidentes (detratores em +1 mês)</div>
+    <div class="detrator-card"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-4" style="font-size:14px;width:48px;height:48px">4×</div><div class="detrator-info"><h4>Cliente 05</h4><p>Jan: 2 detratores (notas 5, 5) · Mar: 2 detratores (notas 1, 2)</p><p style="color:var(--red);margin-top:4px">Padrão recorrente — Pricing é o foco de insatisfação</p></div></div><div class="priority-tag" style="color:var(--red)">🔴 CRÍTICO</div></div></div>
+    <div class="detrator-card"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-4" style="font-size:14px;width:48px;height:48px">4×</div><div class="detrator-info"><h4>Comercial Zaffari</h4><p>Jan: 3 detratores (notas 1, 4, 6) · Mar: 1 detrator (nota 5)</p><p style="color:var(--orange);margin-top:4px">Melhorou de jan→fev→mar, mas ainda gera detratores</p></div></div><div class="priority-tag" style="color:var(--orange)">🟡 ATENÇÃO</div></div></div>
+    <div class="detrator-card warn"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-3" style="font-size:14px;width:48px;height:48px">3×</div><div class="detrator-info"><h4>Tenda</h4><p>Jan: 2 detratores (notas 6, 6) · Mar: 1 detrator (nota 5)</p><p style="color:var(--orange);margin-top:4px">Persistente mas com notas menos severas</p></div></div><div class="priority-tag" style="color:var(--orange)">🟡 ATENÇÃO</div></div></div>
+    <div class="detrator-card warn"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-2" style="font-size:14px;width:48px;height:48px">2×</div><div class="detrator-info"><h4>Cliente 13</h4><p>Jan: 1 detrator (nota 6) · Mar: 1 detrator (nota 6)</p><p style="color:var(--green);margin-top:4px">Notas moderadas; volume alto de promotores compensa</p></div></div><div class="priority-tag" style="color:var(--green)">🟢 MONITORAR</div></div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">🌟 Destaques do Ano</div>
+  <div class="highlights-grid">
+    <div class="highlight-card green">
+      <div class="highlight-title">🏆 Melhores do Ano</div>
+      <div class="highlight-item">⭐ <strong>Cliente 21</strong> — NPS +100 em todos os meses</div>
+      <div class="highlight-item">⭐ <strong>Cliente 10</strong> — NPS +90 acumulado, +100 em fev e mar</div>
+      <div class="highlight-item">⭐ <strong>Cliente 28</strong> — NPS +90 acumulado, +100 em fev e mar</div>
+      <div class="highlight-item">⭐ <strong>Fevereiro</strong> — Melhor mês com NPS +81 e só 3 detratores</div>
+      <div class="highlight-item">⭐ <strong>Analytics</strong> — NPS +70 acumulado, superando Pricing em todos os meses</div>
+    </div>
+    <div class="highlight-card orange">
+      <div class="highlight-title">🔍 Pontos de Atenção</div>
+      <div class="highlight-item">⚠️ <strong>Pricing</strong> — concentra 71% dos detratores do ano (15 de 21)</div>
+      <div class="highlight-item">⚠️ <strong>Cliente 05</strong> — 4 detratores no ano, piora de jan→mar</div>
+      <div class="highlight-item">⚠️ <strong>Comercial Zaffari</strong> — 4 detratores, maior volume de respostas</div>
+      <div class="highlight-item">📌 <strong>NPS médio +65</strong> — Abaixo da meta de 70; fevereiro (+81) puxou para cima</div>
+      <div class="highlight-item">📌 <strong>Março</strong> — Queda de 19% vs fevereiro; Semana 2 crítica (NPS +29)</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+<div id="view-jan" class="month-view">
+<div class="main">
+
+<div class="section">
+  <div class="section-title">📊 Resumo Executivo — Janeiro 2026</div>
+  <div class="kpi-grid">
+    <div class="kpi highlight"><div class="kpi-icon">🏆</div><div class="kpi-value" style="color:var(--green)">+56</div><div class="kpi-label">NPS Geral</div><div class="kpi-sub">Muito Bom (meta ≥ 70) <span class="delta first">1º mês</span></div></div>
+    <div class="kpi"><div class="kpi-icon">📝</div><div class="kpi-value" style="color:var(--blue)">123</div><div class="kpi-label">Respostas</div><div class="kpi-sub">Janeiro 2026 <span class="delta first">1º mês</span></div></div>
+    <div class="kpi"><div class="kpi-icon">⭐</div><div class="kpi-value" style="color:var(--green)">80</div><div class="kpi-label">Promotores</div><div class="kpi-sub">65,0% do total <span class="delta first">1º mês</span></div></div>
+    <div class="kpi"><div class="kpi-icon">😐</div><div class="kpi-value" style="color:var(--orange)">32</div><div class="kpi-label">Neutros</div><div class="kpi-sub">26,0% do total <span class="delta first">1º mês</span></div></div>
+    <div class="kpi"><div class="kpi-icon">⚠️</div><div class="kpi-value" style="color:var(--red)">11</div><div class="kpi-label">Detratores</div><div class="kpi-sub">8,9% · 7 clientes <span class="delta first">1º mês</span></div></div>
+  </div>
+</div>
+<div class="section"><div class="section-title">📈 Distribuição das Notas</div><div class="charts-row"><div class="chart-card"><div class="chart-title">Distribuição Geral</div><div class="chart-sub">Promotores / Neutros / Detratores — Janeiro 2026</div><canvas id="chartRosca-jan" height="260"></canvas><div class="legend-row"><div class="legend-item"><div class="legend-dot" style="background:#00b894"></div> Promotores 65,0%</div><div class="legend-item"><div class="legend-dot" style="background:#fdcb6e"></div> Neutros 26,0%</div><div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Detratores 8,9%</div></div></div><div class="chart-card"><div class="chart-title">Histograma de Notas</div><div class="chart-sub">Quantidade de respostas por nota (0 a 10)</div><canvas id="chartHist-jan" height="260"></canvas></div></div></div>
+<div class="section"><div class="section-title">📦 NPS por Produto</div><div class="product-grid"><div class="product-card blue"><div class="product-header"><div><div class="product-label">ZUKKIN PRICING</div><div class="product-name">Pricing</div></div><div style="text-align:right"><div class="product-label">NPS</div><div class="product-nps blue">+47</div></div></div><div class="product-stats"><div class="pstat"><div class="pstat-val" style="color:var(--green)">37</div><div class="pstat-lbl">Promotores</div></div><div class="pstat"><div class="pstat-val" style="color:var(--orange)">14</div><div class="pstat-lbl">Neutros</div></div><div class="pstat"><div class="pstat-val" style="color:var(--red)">9</div><div class="pstat-lbl">Detratores</div></div></div><div style="margin-top:12px;font-size:12px;color:var(--text-dim)">60 respostas · Média 8,53 · 9 detratores — atenção 🔴</div></div><div class="product-card purple"><div class="product-header"><div><div class="product-label">ZUKKIN ANALYTICS</div><div class="product-name">Analytics</div></div><div style="text-align:right"><div class="product-label">NPS</div><div class="product-nps purple">+65</div></div></div><div class="product-stats"><div class="pstat"><div class="pstat-val" style="color:var(--green)">43</div><div class="pstat-lbl">Promotores</div></div><div class="pstat"><div class="pstat-val" style="color:var(--orange)">18</div><div class="pstat-lbl">Neutros</div></div><div class="pstat"><div class="pstat-val" style="color:var(--red)">2</div><div class="pstat-lbl">Detratores</div></div></div><div style="margin-top:12px;font-size:12px;color:var(--text-dim)">63 respostas · Média 8,90 · 2 detratores ⚠️</div></div></div><div class="chart-card"><div class="chart-title">Comparativo por Produto</div><div class="chart-sub">Distribuição — Pricing vs Analytics</div><canvas id="chartProd-jan" height="200"></canvas></div></div>
+<div class="section"><div class="section-title">📅 Evolução Semanal</div><div class="week-grid"><div class="week-card"><div class="week-label">Semana 1</div><div class="week-dates">02 — 07/01</div><div class="week-nps" style="color:var(--green)">+53</div><div class="week-resps">34 respostas</div></div><div class="week-card"><div class="week-label">Semana 2</div><div class="week-dates">08 — 14/01</div><div class="week-nps" style="color:var(--green)">+71<span class="trend-arrow" style="color:var(--green)">↑</span></div><div class="week-resps">28 respostas</div></div><div class="week-card"><div class="week-label">Semana 3</div><div class="week-dates">15 — 21/01</div><div class="week-nps" style="color:var(--orange)">+42<span class="trend-arrow" style="color:var(--red)">↓</span></div><div class="week-resps">26 respostas</div></div><div class="week-card"><div class="week-label">Semana 4</div><div class="week-dates">22 — 28/01</div><div class="week-nps" style="color:var(--green)">+62<span class="trend-arrow" style="color:var(--green)">↑</span></div><div class="week-resps">24 respostas</div></div><div class="week-card"><div class="week-label">Semana 5</div><div class="week-dates">29 — 31/01</div><div class="week-nps" style="color:var(--orange)">+45<span class="trend-arrow" style="color:var(--red)">↓</span></div><div class="week-resps">11 respostas</div></div></div><div class="chart-card"><div class="chart-title">Tendência NPS Semanal</div><div class="chart-sub">Evolução do NPS ao longo de janeiro</div><canvas id="chartWeek-jan" height="200"></canvas></div></div>
+<div class="section"><div class="section-title">🏢 NPS por Cliente</div><div class="chart-card" style="padding:0;overflow:hidden"><div style="padding:24px 24px 0"><div class="chart-title">Ranking de Clientes — Janeiro 2026</div><div class="chart-sub" style="text-align:right">10 clientes · ordenado por volume</div></div><table><thead><tr><th>#</th><th>Cliente</th><th>Respostas</th><th>NPS</th><th>Média</th><th>Notas</th><th>Produtos</th><th>Status</th></tr></thead><tbody>
+<tr><td>1</td><td><strong>Cliente 13</strong></td><td>15</td><td><span style="color:var(--green);font-weight:700">+67</span><div class="nps-bar"><div class="nps-bar-fill" style="width:83%;background:var(--green)"></div></div></td><td>9,1</td><td>6–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-orange">⚠ 1 detrator</span></td></tr>
+<tr><td>2</td><td><strong>Comercial Zaffari</strong></td><td>14</td><td><span style="color:var(--orange);font-weight:700">+21</span><div class="nps-bar"><div class="nps-bar-fill" style="width:60%;background:var(--orange)"></div></div></td><td>7,8</td><td style="color:var(--red)">1–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-red">🔴 3 detratores</span></td></tr>
+<tr><td>3</td><td><strong>Cliente 05</strong></td><td>10</td><td><span style="color:var(--blue);font-weight:700">+40</span><div class="nps-bar"><div class="nps-bar-fill" style="width:70%;background:var(--blue)"></div></div></td><td>8,2</td><td style="color:var(--red)">5–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-red">🔴 2 detratores</span></td></tr>
+<tr><td>4</td><td><strong>Shibata</strong></td><td>7</td><td><span style="color:var(--blue);font-weight:700">+43</span><div class="nps-bar"><div class="nps-bar-fill" style="width:71%;background:var(--blue)"></div></div></td><td>8,4</td><td>7–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Bom</span></td></tr>
+<tr><td>5</td><td><strong>Cliente 28</strong></td><td>7</td><td><span style="color:var(--green);font-weight:700">+71</span><div class="nps-bar"><div class="nps-bar-fill" style="width:85%;background:var(--green)"></div></div></td><td>9,1</td><td>8–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Excelente</span></td></tr>
+<tr><td>6</td><td><strong>Tenda</strong></td><td>4</td><td><span style="color:var(--red);font-weight:700">−25</span><div class="nps-bar"><div class="nps-bar-fill" style="width:37%;background:var(--red)"></div></div></td><td>7,3</td><td style="color:var(--red)">6–10</td><td><span class="badge badge-blue">Pricing</span></td><td><span class="badge badge-red">🔴 2 detratores</span></td></tr>
+<tr><td>7</td><td><strong>Cliente 10</strong></td><td>4</td><td><span style="color:var(--blue);font-weight:700">+50</span><div class="nps-bar"><div class="nps-bar-fill" style="width:75%;background:var(--blue)"></div></div></td><td>8,8</td><td>8–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Bom</span></td></tr>
+<tr><td>8</td><td><strong>Zaffari</strong></td><td>4</td><td><span style="color:var(--blue);font-weight:700">+50</span><div class="nps-bar"><div class="nps-bar-fill" style="width:75%;background:var(--blue)"></div></div></td><td>8,8</td><td>8–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Bom</span></td></tr>
+<tr><td>9</td><td><strong>Cliente 21</strong></td><td>4</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td>10,0</td><td>10–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">🏆 Perfeito</span></td></tr>
+<tr><td>10</td><td><strong>Cliente 06</strong></td><td>4</td><td><span style="color:var(--blue);font-weight:700">+50</span><div class="nps-bar"><div class="nps-bar-fill" style="width:75%;background:var(--blue)"></div></div></td><td>8,0</td><td style="color:var(--red)">3–10</td><td><span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-orange">⚠ 1 detrator</span></td></tr>
+</tbody></table></div></div>
+<div class="section"><div class="section-title">🚨 Detratores do Mês (11)</div>
+<div class="detrator-card"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-1">1</div><div class="detrator-info"><h4>Nova Casa — Sarah Cristina</h4><p>Produto: Zukkin Analytics · Data: 30/01/2026</p></div></div><div class="priority-tag" style="color:var(--red)">🔴 URGENTE</div></div></div>
+<div class="detrator-card"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-1">1</div><div class="detrator-info"><h4>Comercial Zaffari — Gisele Meder</h4><p>Produto: Zukkin Pricing · Data: 05/01/2026</p></div></div><div class="priority-tag" style="color:var(--red)">🔴 URGENTE</div></div></div>
+<div class="detrator-card"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-3">3</div><div class="detrator-info"><h4>Cliente 06 — Higor Henrique</h4><p>Produto: Zukkin Analytics · Data: 14/01/2026</p></div></div><div class="priority-tag" style="color:var(--red)">🔴 URGENTE</div></div></div>
+<div class="detrator-card warn"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-4">4</div><div class="detrator-info"><h4>Formosa — Rogerio</h4><p>Produto: Zukkin Pricing · Data: 20/01/2026</p></div></div><div class="priority-tag" style="color:var(--orange)">🟡 ATENÇÃO</div></div></div>
+<div class="detrator-card warn"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-4">4</div><div class="detrator-info"><h4>Comercial Zaffari — Marcos Vinicius Salla</h4><p>Produto: Zukkin Pricing · Data: 05/01/2026</p></div></div><div class="priority-tag" style="color:var(--orange)">🟡 ATENÇÃO</div></div></div>
+<div class="detrator-card warn"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-5">5</div><div class="detrator-info"><h4>Cliente 05 — Enilson</h4><p>Produto: Zukkin Pricing · Data: 19/01/2026</p></div></div><div class="priority-tag" style="color:var(--orange)">🟡 ATENÇÃO</div></div></div>
+<div class="detrator-card warn"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-5">5</div><div class="detrator-info"><h4>Cliente 05 — Neusam</h4><p>Produto: Zukkin Pricing · Data: 16/01/2026</p></div></div><div class="priority-tag" style="color:var(--orange)">🟡 ATENÇÃO</div></div></div>
+<div class="detrator-card ok"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-6">6</div><div class="detrator-info"><h4>Tenda — Rafael Carnevali</h4><p>Produto: Zukkin Pricing · Data: 23/01/2026</p></div></div><div class="priority-tag" style="color:var(--green)">🟢 MONITORAR</div></div></div>
+<div class="detrator-card ok"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-6">6</div><div class="detrator-info"><h4>Tenda — Leticia Beliz de Souza</h4><p>Produto: Zukkin Pricing · Data: 15/01/2026</p></div></div><div class="priority-tag" style="color:var(--green)">🟢 MONITORAR</div></div></div>
+<div class="detrator-card ok"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-6">6</div><div class="detrator-info"><h4>Comercial Zaffari — Ana Claudia da Silva Alves</h4><p>Produto: Zukkin Pricing · Data: 06/01/2026</p></div></div><div class="priority-tag" style="color:var(--green)">🟢 MONITORAR</div></div></div>
+<div class="detrator-card ok"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-6">6</div><div class="detrator-info"><h4>Cliente 13 — Lucas Apolinario</h4><p>Produto: Zukkin Pricing · Data: 05/01/2026</p></div></div><div class="priority-tag" style="color:var(--green)">🟢 MONITORAR</div></div></div></div>
+<div class="section"><div class="section-title">🌟 Destaques do Mês</div><div class="highlights-grid"><div class="highlight-card green"><div class="highlight-title">🏆 Top Promotores</div><div class="highlight-item">⭐ <strong>Cliente 21</strong> — 4 respostas, média 10,0, NPS +100</div><div class="highlight-item">⭐ <strong>Cliente 28</strong> — 7 respostas, média 9,1, NPS +71</div><div class="highlight-item">⭐ <strong>Cliente 13</strong> — 15 respostas, média 9,1, NPS +67</div></div><div class="highlight-card orange"><div class="highlight-title">🔍 Pontos de Atenção</div><div class="highlight-item">⚠️ <strong>Pricing</strong> — concentra 9 dos 11 detratores (82%)</div><div class="highlight-item">⚠️ <strong>Tenda</strong> — NPS negativo (−25), 2 detratores em 4 respostas</div><div class="highlight-item">📌 <strong>Comercial Zaffari</strong> — 3 detratores, NPS +21</div><div class="highlight-item">📌 <strong>Semana 3</strong> — menor NPS do mês (+42)</div></div></div></div>
+</div></div>
+<div id="view-fev" class="month-view">
+<div class="main">
+<div class="section"><div class="section-title">📊 Resumo Executivo — Fevereiro 2026</div><div class="kpi-grid">
+<div class="kpi highlight"><div class="kpi-icon">🏆</div><div class="kpi-value" style="color:var(--green)">+81</div><div class="kpi-label">NPS Geral</div><div class="kpi-sub">Excelente (meta ≥ 70) <span class="delta up">▲ 45%</span></div></div>
+<div class="kpi"><div class="kpi-icon">📝</div><div class="kpi-value" style="color:var(--blue)">67</div><div class="kpi-label">Respostas</div><div class="kpi-sub">Fevereiro 2026 <span class="delta down">▼ 46%</span></div></div>
+<div class="kpi"><div class="kpi-icon">⭐</div><div class="kpi-value" style="color:var(--green)">57</div><div class="kpi-label">Promotores</div><div class="kpi-sub">85,1% do total <span class="delta up">▲ 31%</span></div></div>
+<div class="kpi"><div class="kpi-icon">😐</div><div class="kpi-value" style="color:var(--orange)">7</div><div class="kpi-label">Neutros</div><div class="kpi-sub">10,4% do total <span class="delta up">▼ 60%</span></div></div>
+<div class="kpi"><div class="kpi-icon">⚠️</div><div class="kpi-value" style="color:var(--red)">3</div><div class="kpi-label">Detratores</div><div class="kpi-sub">4,5% · 2 clientes <span class="delta up">▼ 73%</span></div></div>
+</div></div>
+<div class="section"><div class="section-title">📈 Distribuição das Notas</div><div class="charts-row"><div class="chart-card"><div class="chart-title">Distribuição Geral</div><div class="chart-sub">Promotores / Neutros / Detratores — Fevereiro 2026</div><canvas id="chartRosca-fev" height="260"></canvas><div class="legend-row"><div class="legend-item"><div class="legend-dot" style="background:#00b894"></div> Promotores 85,1%</div><div class="legend-item"><div class="legend-dot" style="background:#fdcb6e"></div> Neutros 10,4%</div><div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Detratores 4,5%</div></div></div><div class="chart-card"><div class="chart-title">Histograma de Notas</div><div class="chart-sub">Quantidade de respostas por nota (0 a 10)</div><canvas id="chartHist-fev" height="260"></canvas></div></div></div>
+<div class="section"><div class="section-title">📦 NPS por Produto</div><div class="product-grid"><div class="product-card blue"><div class="product-header"><div><div class="product-label">ZUKKIN PRICING</div><div class="product-name">Pricing <span class="delta up">▲ 91%</span></div></div><div style="text-align:right"><div class="product-label">NPS</div><div class="product-nps blue">+90</div></div></div><div class="product-stats"><div class="pstat"><div class="pstat-val" style="color:var(--green)">27</div><div class="pstat-lbl">Promotores</div></div><div class="pstat"><div class="pstat-val" style="color:var(--orange)">3</div><div class="pstat-lbl">Neutros</div></div><div class="pstat"><div class="pstat-val" style="color:var(--red)">0</div><div class="pstat-lbl">Detratores</div></div></div><div style="margin-top:12px;font-size:12px;color:var(--text-dim)">30 respostas · Média 9,47 · Nenhum detrator 🎉</div></div><div class="product-card purple"><div class="product-header"><div><div class="product-label">ZUKKIN ANALYTICS</div><div class="product-name">Analytics <span class="delta up">▲ 12%</span></div></div><div style="text-align:right"><div class="product-label">NPS</div><div class="product-nps purple">+73</div></div></div><div class="product-stats"><div class="pstat"><div class="pstat-val" style="color:var(--green)">30</div><div class="pstat-lbl">Promotores</div></div><div class="pstat"><div class="pstat-val" style="color:var(--orange)">4</div><div class="pstat-lbl">Neutros</div></div><div class="pstat"><div class="pstat-val" style="color:var(--red)">3</div><div class="pstat-lbl">Detratores</div></div></div><div style="margin-top:12px;font-size:12px;color:var(--text-dim)">37 respostas · Média 9,11 · 3 detratores ⚠️</div></div></div><div class="chart-card"><div class="chart-title">Comparativo por Produto</div><div class="chart-sub">Distribuição — Pricing vs Analytics</div><canvas id="chartProd-fev" height="200"></canvas></div></div>
+<div class="section"><div class="section-title">📅 Evolução Semanal</div><div class="week-grid"><div class="week-card"><div class="week-label">Semana 1</div><div class="week-dates">01 — 07/02</div><div class="week-nps" style="color:var(--green)">+71</div><div class="week-resps">21 respostas</div></div><div class="week-card"><div class="week-label">Semana 2</div><div class="week-dates">08 — 14/02</div><div class="week-nps" style="color:var(--green)">+88<span class="trend-arrow" style="color:var(--green)">↑</span></div><div class="week-resps">17 respostas</div></div><div class="week-card"><div class="week-label">Semana 3</div><div class="week-dates">15 — 21/02</div><div class="week-nps" style="color:var(--green)">+78<span class="trend-arrow" style="color:var(--red)">↓</span></div><div class="week-resps">18 respostas</div></div><div class="week-card best"><div class="week-label">Semana 4</div><div class="week-dates">22 — 28/02</div><div class="week-nps" style="color:var(--green)">+91<span class="trend-arrow" style="color:var(--green)">↑</span></div><div class="week-resps">11 respostas</div></div></div><div class="chart-card"><div class="chart-title">Tendência NPS Semanal</div><div class="chart-sub">Evolução do NPS ao longo de fevereiro</div><canvas id="chartWeek-fev" height="200"></canvas></div></div>
+<div class="section"><div class="section-title">🏢 NPS por Cliente</div><div class="chart-card" style="padding:0;overflow:hidden"><div style="padding:24px 24px 0"><div class="chart-title">Ranking de Clientes — Fevereiro 2026</div><div class="chart-sub" style="text-align:right">27 clientes · ordenado por volume</div></div><table><thead><tr><th>#</th><th>Cliente</th><th>Respostas</th><th>NPS</th><th>Média</th><th>Notas</th><th>Produtos</th><th>Status</th></tr></thead><tbody>
+<tr><td>1</td><td><strong>Cliente 13</strong></td><td>6</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td>9,8</td><td>9–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Promotor</span></td></tr>
+<tr><td>2</td><td><strong>Cliente 01</strong></td><td>5</td><td><span style="color:var(--green);font-weight:700">+60</span><div class="nps-bar"><div class="nps-bar-fill" style="width:80%;background:var(--green)"></div></div></td><td>9,2</td><td>8–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Bom</span></td></tr>
+<tr><td>3</td><td><strong>Cliente 05</strong></td><td>5</td><td><span style="color:var(--green);font-weight:700">+80</span><div class="nps-bar"><div class="nps-bar-fill" style="width:90%;background:var(--green)"></div></div></td><td>9,0</td><td>8–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Bom</span></td></tr>
+<tr><td>4</td><td><strong>Shibata</strong></td><td>4</td><td><span style="color:var(--blue);font-weight:700">+50</span><div class="nps-bar"><div class="nps-bar-fill" style="width:75%;background:var(--blue)"></div></div></td><td>9,0</td><td style="color:var(--red)">6–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-orange">⚠ 1 detrator</span></td></tr>
+<tr><td>5</td><td><strong>Tenda</strong></td><td>4</td><td><span style="color:var(--blue);font-weight:700">+50</span><div class="nps-bar"><div class="nps-bar-fill" style="width:75%;background:var(--blue)"></div></div></td><td>8,5</td><td>7–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Bom</span></td></tr>
+<tr><td>6</td><td><strong>Comercial Zaffari</strong></td><td>4</td><td><span style="color:var(--green);font-weight:700">+75</span><div class="nps-bar"><div class="nps-bar-fill" style="width:87%;background:var(--green)"></div></div></td><td>9,0</td><td>7–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Bom</span></td></tr>
+<tr><td>7</td><td><strong>Lopes</strong></td><td>3</td><td><span style="color:var(--red);font-weight:700">−33</span><div class="nps-bar"><div class="nps-bar-fill" style="width:33%;background:var(--red)"></div></div></td><td>6,3</td><td style="color:var(--red)">4–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-red">🔴 2 detratores</span></td></tr>
+<tr><td>8</td><td><strong>Zaffari</strong></td><td>3</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td>9,7</td><td>9–10</td><td><span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Promotor</span></td></tr>
+<tr><td>9</td><td><strong>Cliente 10</strong></td><td>3</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td>10,0</td><td>10–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">⭐ Excelente</span></td></tr>
+<tr><td>10</td><td><strong>Cliente 28</strong></td><td>3</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td>9,7</td><td>9–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Promotor</span></td></tr>
+<tr><td>11</td><td><strong>Cliente 23</strong></td><td>3</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td>9,3</td><td>9–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Promotor</span></td></tr>
+<tr class="collapsed-row"><td>12–27</td><td colspan="7">Votorantim, São Luiz, Cliente 18, Cliente 07, DMA Distribuidora, Cliente 21, Cliente 35, Cliente 37, Carvalho (Vanguarda), Cliente 06, Master, Super do Povo, Cliente 15, Cliente 20, Formosa, Coop — todos NPS +100 <span class="badge badge-green">✅ Todos</span></td></tr>
+</tbody></table></div></div>
+<div class="section"><div class="section-title">🚨 Detratores do Mês</div>
+<div class="detrator-card"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-4">4</div><div class="detrator-info"><h4>Lopes — Rogério Lopes</h4><p>Produto: Zukkin Analytics · Data: 15/02/2026</p><p style="color:var(--red);margin-top:4px">Nota mais baixa do mês</p></div></div><div class="priority-tag" style="color:var(--red)">🔴 URGENTE</div></div></div>
+<div class="detrator-card warn"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-5">5</div><div class="detrator-info"><h4>Lopes — Pedro Silva</h4><p>Produto: Zukkin Analytics · Data: 04/02/2026</p><p style="color:var(--orange);margin-top:4px">2º detrator do cliente Lopes</p></div></div><div class="priority-tag" style="color:var(--orange)">🟡 ATENÇÃO</div></div></div>
+<div class="detrator-card ok"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-6">6</div><div class="detrator-info"><h4>Shibata — Toshimi Toya</h4><p>Produto: Zukkin Analytics · Data: 01/02/2026</p><p style="color:var(--green);margin-top:4px">Demais usuários avaliaram bem</p></div></div><div class="priority-tag" style="color:var(--green)">🟢 MONITORAR</div></div></div></div>
+<div class="section"><div class="section-title">🌟 Destaques do Mês</div><div class="highlights-grid"><div class="highlight-card green"><div class="highlight-title">🏆 Top Promotores</div><div class="highlight-item">⭐ <strong>Cliente 10</strong> — 3 respostas, média 10,0, NPS +100</div><div class="highlight-item">⭐ <strong>Cliente 13</strong> — 6 respostas, média 9,8, NPS +100</div><div class="highlight-item">⭐ <strong>DMA Distribuidora</strong> — 2 respostas, média 10,0, NPS +100</div><div class="highlight-item">⭐ <strong>Cliente 07</strong> — 2 respostas, média 10,0, NPS +100</div></div><div class="highlight-card orange"><div class="highlight-title">🔍 Pontos de Atenção</div><div class="highlight-item">⚠️ <strong>Lopes</strong> — 2 de 3 usuários detratores no Analytics</div><div class="highlight-item">⚠️ <strong>Shibata</strong> — 1 detrator (Toshimi Toya) em meio a promotores</div><div class="highlight-item">📌 <strong>Analytics</strong> — NPS 17 pts abaixo do Pricing (+73 vs +90)</div><div class="highlight-item">📌 <strong>Semana 3</strong> — leve queda (−10 pts) em relação à semana 2</div></div></div></div>
+</div></div>
+<div id="view-mar" class="month-view">
+<div class="main">
+<div class="section"><div class="section-title">📊 Resumo Executivo — Março 2026</div><div class="kpi-grid">
+<div class="kpi highlight"><div class="kpi-icon">🏆</div><div class="kpi-value" style="color:var(--green)">+66</div><div class="kpi-label">NPS Geral</div><div class="kpi-sub">Bom (meta ≥ 70) <span class="delta down">▼ 19%</span></div></div>
+<div class="kpi"><div class="kpi-icon">📝</div><div class="kpi-value" style="color:var(--blue)">73</div><div class="kpi-label">Respostas</div><div class="kpi-sub">Março 2026 <span class="delta up">▲ 9%</span></div></div>
+<div class="kpi"><div class="kpi-icon">⭐</div><div class="kpi-value" style="color:var(--green)">55</div><div class="kpi-label">Promotores</div><div class="kpi-sub">75,3% do total <span class="delta down">▼ 12%</span></div></div>
+<div class="kpi"><div class="kpi-icon">😐</div><div class="kpi-value" style="color:var(--orange)">11</div><div class="kpi-label">Neutros</div><div class="kpi-sub">15,1% do total <span class="delta down">▲ 57%</span></div></div>
+<div class="kpi"><div class="kpi-icon">⚠️</div><div class="kpi-value" style="color:var(--red)">7</div><div class="kpi-label">Detratores</div><div class="kpi-sub">9,6% · 6 clientes <span class="delta down">▲ 133%</span></div></div>
+</div></div>
+<div class="section"><div class="section-title">📈 Distribuição das Notas</div><div class="charts-row"><div class="chart-card"><div class="chart-title">Distribuição Geral</div><div class="chart-sub">Promotores / Neutros / Detratores — Março 2026</div><canvas id="chartRosca-mar" height="260"></canvas><div class="legend-row"><div class="legend-item"><div class="legend-dot" style="background:#00b894"></div> Promotores 75,3%</div><div class="legend-item"><div class="legend-dot" style="background:#fdcb6e"></div> Neutros 15,1%</div><div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Detratores 9,6%</div></div></div><div class="chart-card"><div class="chart-title">Histograma de Notas</div><div class="chart-sub">Quantidade de respostas por nota (0 a 10)</div><canvas id="chartHist-mar" height="260"></canvas></div></div></div>
+<div class="section"><div class="section-title">📦 NPS por Produto</div><div class="product-grid"><div class="product-card blue"><div class="product-header"><div><div class="product-label">ZUKKIN PRICING</div><div class="product-name">Pricing <span class="delta down">▼ 36%</span></div></div><div style="text-align:right"><div class="product-label">NPS</div><div class="product-nps blue">+58</div></div></div><div class="product-stats"><div class="pstat"><div class="pstat-val" style="color:var(--green)">32</div><div class="pstat-lbl">Promotores</div></div><div class="pstat"><div class="pstat-val" style="color:var(--orange)">7</div><div class="pstat-lbl">Neutros</div></div><div class="pstat"><div class="pstat-val" style="color:var(--red)">6</div><div class="pstat-lbl">Detratores</div></div></div><div style="margin-top:12px;font-size:12px;color:var(--text-dim)">45 respostas · Média 8,62 · 6 detratores ⚠️</div></div><div class="product-card purple"><div class="product-header"><div><div class="product-label">ZUKKIN ANALYTICS</div><div class="product-name">Analytics <span class="delta up">▲ 8%</span></div></div><div style="text-align:right"><div class="product-label">NPS</div><div class="product-nps purple">+79</div></div></div><div class="product-stats"><div class="pstat"><div class="pstat-val" style="color:var(--green)">23</div><div class="pstat-lbl">Promotores</div></div><div class="pstat"><div class="pstat-val" style="color:var(--orange)">4</div><div class="pstat-lbl">Neutros</div></div><div class="pstat"><div class="pstat-val" style="color:var(--red)">1</div><div class="pstat-lbl">Detratores</div></div></div><div style="margin-top:12px;font-size:12px;color:var(--text-dim)">28 respostas · Média 9,18 · 1 detrator ⚠️</div></div></div><div class="chart-card"><div class="chart-title">Comparativo por Produto</div><div class="chart-sub">Distribuição — Pricing vs Analytics</div><canvas id="chartProd-mar" height="200"></canvas></div></div>
+<div class="section"><div class="section-title">📅 Evolução Semanal</div><div class="week-grid"><div class="week-card"><div class="week-label">Semana 1</div><div class="week-dates">01 — 07/03</div><div class="week-nps" style="color:var(--green)">+67</div><div class="week-resps">9 respostas</div></div><div class="week-card"><div class="week-label">Semana 2</div><div class="week-dates">08 — 14/03</div><div class="week-nps" style="color:var(--red)">+29<span class="trend-arrow" style="color:var(--red)">↓</span></div><div class="week-resps">17 respostas</div></div><div class="week-card"><div class="week-label">Semana 3</div><div class="week-dates">15 — 21/03</div><div class="week-nps" style="color:var(--green)">+79<span class="trend-arrow" style="color:var(--green)">↑</span></div><div class="week-resps">24 respostas</div></div><div class="week-card best"><div class="week-label">Semana 4</div><div class="week-dates">22 — 28/03</div><div class="week-nps" style="color:var(--green)">+80<span class="trend-arrow" style="color:var(--green)">↑</span></div><div class="week-resps">15 respostas</div></div><div class="week-card"><div class="week-label">Semana 5</div><div class="week-dates">29 — 31/03</div><div class="week-nps" style="color:var(--green)">+75<span class="trend-arrow" style="color:var(--red)">↓</span></div><div class="week-resps">8 respostas</div></div></div><div class="chart-card"><div class="chart-title">Tendência NPS Semanal</div><div class="chart-sub">Evolução do NPS ao longo de março</div><canvas id="chartWeek-mar" height="200"></canvas></div></div>
+<div class="section"><div class="section-title">🏢 NPS por Cliente</div><div class="chart-card" style="padding:0;overflow:hidden"><div style="padding:24px 24px 0"><div class="chart-title">Ranking de Clientes — Março 2026</div><div class="chart-sub" style="text-align:right">37 clientes · ordenado por volume</div></div><table><thead><tr><th>#</th><th>Cliente</th><th>Respostas</th><th>NPS</th><th>Média</th><th>Notas</th><th>Produtos</th><th>Status</th></tr></thead><tbody>
+<tr><td>1</td><td><strong>Comercial Zaffari</strong></td><td>11</td><td><span style="color:var(--blue);font-weight:700">+55</span><div class="nps-bar"><div class="nps-bar-fill" style="width:77%;background:var(--blue)"></div></div></td><td>8,6</td><td style="color:var(--red)">5–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-orange">⚠ 1 detrator</span></td></tr>
+<tr><td>2</td><td><strong>Cliente 05</strong></td><td>6</td><td><span style="color:var(--orange);font-weight:700">+17</span><div class="nps-bar"><div class="nps-bar-fill" style="width:58%;background:var(--orange)"></div></div></td><td>6,7</td><td style="color:var(--red)">1–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-red">🔴 2 detratores</span></td></tr>
+<tr><td>3</td><td><strong>Cliente 13</strong></td><td>6</td><td><span style="color:var(--blue);font-weight:700">+50</span><div class="nps-bar"><div class="nps-bar-fill" style="width:75%;background:var(--blue)"></div></div></td><td>8,7</td><td style="color:var(--red)">6–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-orange">⚠ 1 detrator</span></td></tr>
+<tr><td>4</td><td><strong>Master</strong></td><td>5</td><td><span style="color:var(--green);font-weight:700">+80</span><div class="nps-bar"><div class="nps-bar-fill" style="width:90%;background:var(--green)"></div></div></td><td>9,6</td><td>8–10</td><td><span class="badge badge-blue">Pricing</span></td><td><span class="badge badge-green">✅ Bom</span></td></tr>
+<tr><td>5</td><td><strong>Cliente 10</strong></td><td>3</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td>10,0</td><td>10–10</td><td><span class="badge badge-blue">Pricing</span> <span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">⭐ Excelente</span></td></tr>
+<tr><td>6</td><td><strong>Tenda</strong></td><td>3</td><td><span style="color:var(--blue);font-weight:700">+33</span><div class="nps-bar"><div class="nps-bar-fill" style="width:66%;background:var(--blue)"></div></div></td><td>8,3</td><td style="color:var(--red)">5–10</td><td><span class="badge badge-blue">Pricing</span></td><td><span class="badge badge-orange">⚠ 1 detrator</span></td></tr>
+<tr><td>7</td><td><strong>Zaffari</strong></td><td>3</td><td><span style="color:var(--green);font-weight:700">+67</span><div class="nps-bar"><div class="nps-bar-fill" style="width:83%;background:var(--green)"></div></div></td><td>8,7</td><td>7–10</td><td><span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Bom</span></td></tr>
+<tr><td>8</td><td><strong>Nosso Atacarejo</strong></td><td>2</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td>9,5</td><td>9–10</td><td><span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Promotor</span></td></tr>
+<tr><td>9</td><td><strong>Confiança</strong></td><td>2</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td>10,0</td><td>10–10</td><td><span class="badge badge-purple">Analytics</span> <span class="badge badge-blue">Pricing</span></td><td><span class="badge badge-green">✅ Promotor</span></td></tr>
+<tr><td>10</td><td><strong>Cliente 15</strong></td><td>2</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td>10,0</td><td>10–10</td><td><span class="badge badge-purple">Analytics</span> <span class="badge badge-blue">Pricing</span></td><td><span class="badge badge-green">✅ Promotor</span></td></tr>
+<tr><td>11</td><td><strong>Queiroz</strong></td><td>2</td><td><span style="color:var(--orange);font-weight:700">0</span><div class="nps-bar"><div class="nps-bar-fill" style="width:50%;background:var(--orange)"></div></div></td><td>6,0</td><td style="color:var(--red)">2–10</td><td><span class="badge badge-blue">Pricing</span></td><td><span class="badge badge-orange">⚠ 1 detrator</span></td></tr>
+<tr><td>12</td><td><strong>Cliente 02</strong></td><td>2</td><td><span style="color:var(--green);font-weight:700">+100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:100%;background:var(--green)"></div></div></td><td>9,5</td><td>9–10</td><td><span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-green">✅ Promotor</span></td></tr>
+<tr><td>13</td><td><strong>Shibata</strong></td><td>2</td><td><span style="color:var(--orange);font-weight:700">0</span><div class="nps-bar"><div class="nps-bar-fill" style="width:50%;background:var(--orange)"></div></div></td><td>8,0</td><td>8–8</td><td><span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-orange">⚠ Atenção</span></td></tr>
+<tr><td>14</td><td><strong>Votorantim</strong></td><td>1</td><td><span style="color:var(--red);font-weight:700">−100</span><div class="nps-bar"><div class="nps-bar-fill" style="width:5%;background:var(--red)"></div></div></td><td>1,0</td><td style="color:var(--red)">1–1</td><td><span class="badge badge-purple">Analytics</span></td><td><span class="badge badge-red">🔴 Crítico</span></td></tr>
+<tr class="collapsed-row"><td>15–37</td><td colspan="7">Cliente 18, Cliente 19, Cliente 20, Cliente 21, Cliente 14, Cliente 22, Cliente 23, Cliente 24, Cliente 25, Cliente 26, Cliente 27, Cliente 28, Cliente 29, Cliente 30, Cliente 31, Cliente 03, Cliente 32, Cliente 33, Cliente 34, Cliente 35, Cliente 01, Cliente 36, Cliente 37 — todos NPS +100 <span class="badge badge-green">✅ Todos</span></td></tr>
+</tbody></table></div></div>
+<div class="section"><div class="section-title">🚨 Detratores do Mês (7)</div>
+<div class="detrator-card"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-1">1</div><div class="detrator-info"><h4>Votorantim — Tobias Alessandro Lenharo</h4><p>Produto: Zukkin Analytics · Data: 16/03/2026</p><p style="color:var(--red);margin-top:4px">Nota mais baixa do mês</p></div></div><div class="priority-tag" style="color:var(--red)">🔴 URGENTE</div></div></div>
+<div class="detrator-card"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-1">1</div><div class="detrator-info"><h4>Cliente 05 — TALYS</h4><p>Produto: Zukkin Pricing · Data: 10/03/2026</p><p style="color:var(--red);margin-top:4px">2º detrator do Cliente 05</p></div></div><div class="priority-tag" style="color:var(--red)">🔴 URGENTE</div></div></div>
+<div class="detrator-card"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-2">2</div><div class="detrator-info"><h4>Queiroz — Andreia Vieira</h4><p>Produto: Zukkin Pricing · Data: 12/03/2026</p></div></div><div class="priority-tag" style="color:var(--red)">🔴 URGENTE</div></div></div>
+<div class="detrator-card"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-2">2</div><div class="detrator-info"><h4>Cliente 05 — ANDRESSAMS</h4><p>Produto: Zukkin Pricing · Data: 05/03/2026</p></div></div><div class="priority-tag" style="color:var(--orange)">🟡 ATENÇÃO</div></div></div>
+<div class="detrator-card warn"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-5">5</div><div class="detrator-info"><h4>Comercial Zaffari — ANDRE LOPES</h4><p>Produto: Zukkin Pricing · Data: 11/03/2026</p></div></div><div class="priority-tag" style="color:var(--orange)">🟡 ATENÇÃO</div></div></div>
+<div class="detrator-card warn"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-5">5</div><div class="detrator-info"><h4>Tenda — Marcia Regina Romanin Narvas</h4><p>Produto: Zukkin Pricing · Data: 10/03/2026</p></div></div><div class="priority-tag" style="color:var(--orange)">🟡 ATENÇÃO</div></div></div>
+<div class="detrator-card ok"><div class="detrator-top"><div style="display:flex;align-items:center;gap:16px"><div class="nota-badge nota-6">6</div><div class="detrator-info"><h4>Cliente 13 — Leandro Fernandes</h4><p>Produto: Zukkin Pricing · Data: 27/03/2026</p></div></div><div class="priority-tag" style="color:var(--green)">🟢 MONITORAR</div></div></div></div>
+<div class="section"><div class="section-title">🌟 Destaques do Mês</div><div class="highlights-grid"><div class="highlight-card green"><div class="highlight-title">🏆 Top Promotores</div><div class="highlight-item">⭐ <strong>Cliente 10</strong> — 3 respostas, média 10,0, NPS +100</div><div class="highlight-item">⭐ <strong>Confiança</strong> — 2 respostas, média 10,0, NPS +100</div><div class="highlight-item">⭐ <strong>Cliente 15</strong> — 2 respostas, média 10,0, NPS +100</div><div class="highlight-item">⭐ <strong>Nosso Atacarejo</strong> — 2 respostas, média 9,5, NPS +100</div></div><div class="highlight-card orange"><div class="highlight-title">🔍 Pontos de Atenção</div><div class="highlight-item">⚠️ <strong>Cliente 05</strong> — 2 de 6 usuários detratores no Pricing</div><div class="highlight-item">⚠️ <strong>Votorantim</strong> — Detrator com nota 1 no Analytics</div><div class="highlight-item">📌 <strong>Pricing</strong> — NPS 21 pts abaixo do Analytics (+58 vs +79)</div><div class="highlight-item">📌 <strong>Semana 2</strong> — forte queda (−38 pts) vs semana 1</div><div class="highlight-item">📌 <strong>NPS Geral</strong> — Abaixo da meta de 70 (atual: +66)</div></div></div></div>
+</div></div>
+<div style="max-width:1200px;margin:0 auto;padding:0 40px 24px">
+  <a href="index.html" style="color:#8b8fa3;text-decoration:none;font-size:13px;">← Voltar ao Data Room</a>
+</div>
+<footer class="footer">
+  <strong>Zukkin Brasil Inteligência de Mercado S/A</strong><br>
+  CNPJ: 28.346.370/0001-02 · Documento confidencial preparado para Due Diligence<br>
+  Projeções sujeitas a revisão · Abril 2026
+</footer>
+
+<script>
+const DATA={
+  ano:{rosca:[192,50,21],total:263,hist:[0,4,2,1,3,5,6,14,36,51,141],prodP:[96,24,15],prodA:[96,26,6],weeks:[56,81,66],weekLabels:['Janeiro','Fevereiro','Março']},
+  jan:{rosca:[80,32,11],total:123,hist:[0,2,0,1,2,2,4,10,22,20,60],prodP:[37,14,9],prodA:[43,18,2],weeks:[53,71,42,62,45],weekLabels:['S1\n(02–07/01)','S2\n(08–14/01)','S3\n(15–21/01)','S4\n(22–28/01)','S5\n(29–31/01)']},
+  fev:{rosca:[57,7,3],total:67,hist:[0,0,0,0,1,1,1,2,5,18,39],prodP:[27,3,0],prodA:[30,4,3],weeks:[71,88,78,91],weekLabels:['S1\n(01–07/02)','S2\n(08–14/02)','S3\n(15–21/02)','S4\n(22–28/02)']},
+  mar:{rosca:[55,11,7],total:73,hist:[0,2,2,0,0,2,1,2,9,13,42],prodP:[32,7,6],prodA:[23,4,1],weeks:[67,29,79,80,75],weekLabels:['S1\n(01–07/03)','S2\n(08–14/03)','S3\n(15–21/03)','S4\n(22–28/03)','S5\n(29–31/03)']}
+};
+function initCharts(m){
+  const d=DATA[m];
+  new Chart(document.getElementById('chartRosca-'+m),{type:'doughnut',data:{labels:['Promotores','Neutros','Detratores'],datasets:[{data:d.rosca,backgroundColor:['#00b894','#fdcb6e','#ff6b6b'],borderColor:'#1a1d27',borderWidth:3,hoverOffset:8}]},options:{cutout:'72%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw} (${(ctx.raw/d.total*100).toFixed(1)}%)`}}}}});
+  new Chart(document.getElementById('chartHist-'+m),{type:'bar',data:{labels:['0','1','2','3','4','5','6','7','8','9','10'],datasets:[{label:'Respostas',data:d.hist,backgroundColor:['#ff6b6b','#ff6b6b','#ff6b6b','#ff6b6b','#ff6b6b','#ff6b6b','#ff6b6b','#fdcb6e','#fdcb6e','#00b894','#00b894'],borderRadius:4,borderSkipped:false}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{color:'#2e3345'},ticks:{color:'#8b8fa3'}},y:{grid:{color:'#2e3345'},ticks:{color:'#8b8fa3'},beginAtZero:true}}}});
+  new Chart(document.getElementById('chartProd-'+m),{type:'bar',data:{labels:['Promotores','Neutros','Detratores'],datasets:[{label:'Pricing',data:d.prodP,backgroundColor:'rgba(116,185,255,.8)',borderRadius:4,borderSkipped:false},{label:'Analytics',data:d.prodA,backgroundColor:'rgba(162,155,254,.8)',borderRadius:4,borderSkipped:false}]},options:{plugins:{legend:{labels:{color:'#e4e6ef'}}},scales:{x:{grid:{color:'#2e3345'},ticks:{color:'#8b8fa3'}},y:{grid:{color:'#2e3345'},ticks:{color:'#8b8fa3'},beginAtZero:true}}}});
+  const isYear=m==='ano';
+  new Chart(document.getElementById('chartWeek-'+m),{type:'line',data:{labels:d.weekLabels,datasets:[{label:'NPS',data:d.weeks,borderColor:isYear?'#a29bfe':'#00b894',backgroundColor:isYear?'rgba(162,155,254,.1)':'rgba(0,184,148,.1)',borderWidth:3,pointBackgroundColor:isYear?'#a29bfe':'#00b894',pointRadius:6,pointHoverRadius:8,fill:true,tension:.4}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` NPS: +${ctx.raw}`}}},scales:{x:{grid:{color:'#2e3345'},ticks:{color:'#8b8fa3'}},y:{grid:{color:'#2e3345'},ticks:{color:'#8b8fa3',callback:v=>`+${v}`},min:0,max:100}}}});
+}
+initCharts('ano');
+</script>
+</body></html>

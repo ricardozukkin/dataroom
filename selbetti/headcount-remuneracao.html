@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zukkin — Headcount & Remuneração</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #F8FAFC; color: #1E293B; padding: 40px; }
+  .header { background: #1E293B; color: white; padding: 32px 40px; border-radius: 12px 12px 0 0; }
+  .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .header p { font-size: 13px; color: #94A3B8; }
+  .summary-bar { background: #F1F5F9; padding: 20px 40px; display: flex; gap: 40px; border-bottom: 1px solid #E2E8F0; flex-wrap: wrap; }
+  .summary-item { text-align: center; }
+  .summary-item .number { font-size: 24px; font-weight: 700; color: #1E293B; }
+  .summary-item .label { font-size: 11px; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; }
+  .dept-section { margin-top: 24px; background: white; border-radius: 8px; border: 1px solid #E2E8F0; overflow: hidden; }
+  .dept-header { background: #1E293B; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .dept-header h2 { font-size: 14px; font-weight: 600; }
+  .dept-header .badge { background: rgba(255,255,255,0.15); padding: 3px 10px; border-radius: 12px; font-size: 11px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { background: #F8FAFC; padding: 8px 12px; text-align: left; font-weight: 600; color: #64748B; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E2E8F0; }
+  tbody td { padding: 8px 12px; border-bottom: 1px solid #F1F5F9; }
+  tbody tr:hover { background: #F8FAFC; }
+  .tipo-pj { background: #DBEAFE; color: #1E40AF; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .tipo-clt { background: #DCFCE7; color: #166534; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .tipo-estagio { background: #FEF3C7; color: #92400E; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .val { text-align: right; font-variant-numeric: tabular-nums; }
+  .subtotal { background: #F1F5F9; font-weight: 600; }
+  .subtotal td { padding: 8px 12px; border-top: 2px solid #E2E8F0; }
+  .footer { text-align: center; padding: 20px; font-size: 11px; color: #94A3B8; margin-top: 24px; }
+  @media print { body { padding: 10px; } .dept-section { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Headcount & Remuneração por Departamento</h1>
+  <p>Zukkin Brasil Inteligência de Mercado S/A · Base: Abril 2026 · Confidencial — Selbetti</p>
+</div>
+<div class="summary-bar">
+  <div class="summary-item"><div class="number">72</div><div class="label">Colaboradores</div></div>
+  <div class="summary-item"><div class="number">26</div><div class="label">CLT</div></div>
+  <div class="summary-item"><div class="number">10</div><div class="label">PJ</div></div>
+  <div class="summary-item"><div class="number">36</div><div class="label">Estagiários</div></div>
+  <div class="summary-item"><div class="number">R$ 229,254</div><div class="label">Custo Mensal</div></div>
+  <div class="summary-item"><div class="number">R$ 2,751,043</div><div class="label">Custo Anual</div></div>
+</div>
+
+<div class="dept-section">
+  <div class="dept-header">
+    <h2>Desenvolvimento / P&D</h2>
+    <div class="badge">5 pessoas · R$ 40,850/mês</div>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Colaborador</th><th>Cargo</th><th>Vínculo</th><th>Produto</th><th class="val">Mensal (R$)</th><th class="val">Anual (R$)</th>
+    </tr></thead>
+    <tbody>
+    <tr>
+      <td>Colaborador 01</td><td>Consultor Sênior</td>
+      <td><span class="tipo-pj">PJ</span></td>
+      <td>Desenvolvimento</td>
+      <td class="val">R$ 15,000</td><td class="val">R$ 180,000</td>
+    </tr>
+    <tr>
+      <td>Colaborador 02</td><td>Especialista Junior</td>
+      <td><span class="tipo-pj">PJ</span></td>
+      <td>Desenvolvimento</td>
+      <td class="val">R$ 8,000</td><td class="val">R$ 96,000</td>
+    </tr>
+    <tr>
+      <td>Colaborador 03</td><td>Analista Sênior II</td>
+      <td><span class="tipo-pj">PJ</span></td>
+      <td>Desenvolvimento</td>
+      <td class="val">R$ 7,000</td><td class="val">R$ 84,000</td>
+    </tr>
+    <tr>
+      <td>Colaborador 04</td><td>Analista Sênior</td>
+      <td><span class="tipo-pj">PJ</span></td>
+      <td>Desenvolvimento</td>
+      <td class="val">R$ 6,850</td><td class="val">R$ 82,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 05</td><td>Analista Pleno</td>
+      <td><span class="tipo-pj">PJ</span></td>
+      <td>Desenvolvimento</td>
+      <td class="val">R$ 4,000</td><td class="val">R$ 48,000</td>
+    </tr>
+    <tr class="subtotal">
+      <td colspan="4">Subtotal — Desenvolvimento / P&D</td>
+      <td class="val">R$ 40,850</td><td class="val">R$ 490,200</td>
+    </tr></tbody></table>
+</div>
+
+<div class="dept-section">
+  <div class="dept-header">
+    <h2>Projetos / Pricing</h2>
+    <div class="badge">5 pessoas · R$ 59,310/mês</div>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Colaborador</th><th>Cargo</th><th>Vínculo</th><th>Produto</th><th class="val">Mensal (R$)</th><th class="val">Anual (R$)</th>
+    </tr></thead>
+    <tbody>
+    <tr>
+      <td>Colaborador 06</td><td>Gerente</td>
+      <td><span class="tipo-pj">PJ</span></td>
+      <td>ZPricing</td>
+      <td class="val">R$ 22,000</td><td class="val">R$ 264,000</td>
+    </tr>
+    <tr>
+      <td>Colaborador 07</td><td>Consultor de Pricing</td>
+      <td><span class="tipo-pj">PJ</span></td>
+      <td>ZConsulting</td>
+      <td class="val">R$ 20,000</td><td class="val">R$ 240,000</td>
+    </tr>
+    <tr>
+      <td>Colaborador 08</td><td>Especialista Pleno</td>
+      <td><span class="tipo-pj">PJ</span></td>
+      <td>ZPricing</td>
+      <td class="val">R$ 7,500</td><td class="val">R$ 90,000</td>
+    </tr>
+    <tr>
+      <td>Colaborador 09</td><td>Especialista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZPricing</td>
+      <td class="val">R$ 5,640</td><td class="val">R$ 67,680</td>
+    </tr>
+    <tr>
+      <td>Colaborador 10</td><td>Analista Sênior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZPricing</td>
+      <td class="val">R$ 4,170</td><td class="val">R$ 50,040</td>
+    </tr>
+    <tr class="subtotal">
+      <td colspan="4">Subtotal — Projetos / Pricing</td>
+      <td class="val">R$ 59,310</td><td class="val">R$ 711,720</td>
+    </tr></tbody></table>
+</div>
+
+<div class="dept-section">
+  <div class="dept-header">
+    <h2>Operações</h2>
+    <div class="badge">6 pessoas · R$ 34,926/mês</div>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Colaborador</th><th>Cargo</th><th>Vínculo</th><th>Produto</th><th class="val">Mensal (R$)</th><th class="val">Anual (R$)</th>
+    </tr></thead>
+    <tbody>
+    <tr>
+      <td>Colaborador 11</td><td>Gerente </td>
+      <td><span class="tipo-pj">PJ</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 23,000</td><td class="val">R$ 276,000</td>
+    </tr>
+    <tr>
+      <td>Colaborador 12</td><td>Analista Pleno</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 3,043</td><td class="val">R$ 36,516</td>
+    </tr>
+    <tr>
+      <td>Colaborador 13</td><td>Analista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 2,988</td><td class="val">R$ 35,855</td>
+    </tr>
+    <tr>
+      <td>Colaborador 14</td><td>Analista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 2,900</td><td class="val">R$ 34,800</td>
+    </tr>
+    <tr>
+      <td>Colaborador 15</td><td>Analista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,996</td><td class="val">R$ 23,947</td>
+    </tr>
+    <tr>
+      <td>Colaborador 16</td><td>Analista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,000</td><td class="val">R$ 12,000</td>
+    </tr>
+    <tr class="subtotal">
+      <td colspan="4">Subtotal — Operações</td>
+      <td class="val">R$ 34,926</td><td class="val">R$ 419,117</td>
+    </tr></tbody></table>
+</div>
+
+<div class="dept-section">
+  <div class="dept-header">
+    <h2>Qualidade / Coleta</h2>
+    <div class="badge">51 pessoas · R$ 74,412/mês</div>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Colaborador</th><th>Cargo</th><th>Vínculo</th><th>Produto</th><th class="val">Mensal (R$)</th><th class="val">Anual (R$)</th>
+    </tr></thead>
+    <tbody>
+    <tr>
+      <td>Colaborador 17</td><td>Especialista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 4,573</td><td class="val">R$ 54,875</td>
+    </tr>
+    <tr>
+      <td>Colaborador 18</td><td>Analista Pleno</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 3,508</td><td class="val">R$ 42,095</td>
+    </tr>
+    <tr>
+      <td>Colaborador 19</td><td>Analista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 3,164</td><td class="val">R$ 37,965</td>
+    </tr>
+    <tr>
+      <td>Colaborador 20</td><td>Analista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 3,083</td><td class="val">R$ 36,995</td>
+    </tr>
+    <tr>
+      <td>Colaborador 21</td><td>Analista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 2,995</td><td class="val">R$ 35,940</td>
+    </tr>
+    <tr>
+      <td>Colaborador 22</td><td>Assistente Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 2,478</td><td class="val">R$ 29,741</td>
+    </tr>
+    <tr>
+      <td>Colaborador 23</td><td>Assistente Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 2,245</td><td class="val">R$ 26,939</td>
+    </tr>
+    <tr>
+      <td>Colaborador 24</td><td>Assistente Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 2,157</td><td class="val">R$ 25,884</td>
+    </tr>
+    <tr>
+      <td>Colaborador 25</td><td>Assistente Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 2,157</td><td class="val">R$ 25,884</td>
+    </tr>
+    <tr>
+      <td>Colaborador 26</td><td>Assistente Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 2,157</td><td class="val">R$ 25,884</td>
+    </tr>
+    <tr>
+      <td>Colaborador 27</td><td>Assistente Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 2,134</td><td class="val">R$ 25,607</td>
+    </tr>
+    <tr>
+      <td>Colaborador 28</td><td>Assistente Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 2,087</td><td class="val">R$ 25,043</td>
+    </tr>
+    <tr>
+      <td>Colaborador 29</td><td>Assistente Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,999</td><td class="val">R$ 23,987</td>
+    </tr>
+    <tr>
+      <td>Colaborador 30</td><td>Assistente Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,129</td><td class="val">R$ 13,547</td>
+    </tr>
+    <tr>
+      <td>Colaborador 31</td><td>Analista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 390</td><td class="val">R$ 4,680</td>
+    </tr>
+    <tr>
+      <td>Colaborador 32</td><td>Analista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 390</td><td class="val">R$ 4,680</td>
+    </tr>
+    <tr>
+      <td>Colaborador 33</td><td>Assistente Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 367</td><td class="val">R$ 4,403</td>
+    </tr>
+    <tr>
+      <td>Colaborador 34</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 35</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 36</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZPromo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 37</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZPromo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 38</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 39</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZPromo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 40</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 41</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 42</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 43</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 44</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 45</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 46</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 47</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 48</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 49</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 50</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 51</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZRobot</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 52</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 53</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZRobot</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 54</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZRobot</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 55</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZPromo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 56</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZPromo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 57</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 58</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZRobot</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 59</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 60</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 61</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZRobot</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 62</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 63</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 64</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 65</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZPromo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 66</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZPromo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 67</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>ZAnalytics e ZGo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr class="subtotal">
+      <td colspan="4">Subtotal — Qualidade / Coleta</td>
+      <td class="val">R$ 74,412</td><td class="val">R$ 892,947</td>
+    </tr></tbody></table>
+</div>
+
+<div class="dept-section">
+  <div class="dept-header">
+    <h2>Administrativo / Financeiro</h2>
+    <div class="badge">1 pessoas · R$ 12,260/mês</div>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Colaborador</th><th>Cargo</th><th>Vínculo</th><th>Produto</th><th class="val">Mensal (R$)</th><th class="val">Anual (R$)</th>
+    </tr></thead>
+    <tbody>
+    <tr>
+      <td>Colaborador 68</td><td>Supervisor</td>
+      <td><span class="tipo-pj">PJ</span></td>
+      <td>Admistrativo</td>
+      <td class="val">R$ 12,260</td><td class="val">R$ 147,120</td>
+    </tr>
+    <tr class="subtotal">
+      <td colspan="4">Subtotal — Administrativo / Financeiro</td>
+      <td class="val">R$ 12,260</td><td class="val">R$ 147,120</td>
+    </tr></tbody></table>
+</div>
+
+<div class="dept-section">
+  <div class="dept-header">
+    <h2>Recursos Humanos</h2>
+    <div class="badge">4 pessoas · R$ 7,495/mês</div>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Colaborador</th><th>Cargo</th><th>Vínculo</th><th>Produto</th><th class="val">Mensal (R$)</th><th class="val">Anual (R$)</th>
+    </tr></thead>
+    <tbody>
+    <tr>
+      <td>Colaborador 69</td><td>Analista Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>Admistrativo</td>
+      <td class="val">R$ 2,745</td><td class="val">R$ 32,939</td>
+    </tr>
+    <tr>
+      <td>Colaborador 70</td><td>Assistente Júnior</td>
+      <td><span class="tipo-clt">CLT</span></td>
+      <td>Admistrativo</td>
+      <td class="val">R$ 2,550</td><td class="val">R$ 30,599</td>
+    </tr>
+    <tr>
+      <td>Colaborador 71</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>Admistrativo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr>
+      <td>Colaborador 72</td><td>Estagiário</td>
+      <td><span class="tipo-estagio">Estágio</span></td>
+      <td>Admistrativo</td>
+      <td class="val">R$ 1,100</td><td class="val">R$ 13,200</td>
+    </tr>
+    <tr class="subtotal">
+      <td colspan="4">Subtotal — Recursos Humanos</td>
+      <td class="val">R$ 7,495</td><td class="val">R$ 89,939</td>
+    </tr></tbody></table>
+</div>
+
+<div class="footer">
+  Confidencial — Preparado para Due Diligence — Selbetti · Abril 2026<br>
+  Valores incluem salário, adiantamentos, plano de saúde e encargos. Estagiários: bolsa-auxílio padrão R$ 1.100/mês.<br>
+  Não inclui pró-labore dos sócios/diretores. Detalhamento disponível pós-LOI.
+</div>
+</body></html>
